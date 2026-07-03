@@ -5,18 +5,28 @@ platform spec and what's actually true on HRSE2 today. Some need a decision;
 some are just things worth knowing before you assume the platform doc is
 already reality.
 
-## 1. Verification gate has no coverage measurement (real gap)
+## 1. RESOLVED — Verification gate coverage gap (Option C chosen)
 
 `rules/testing-gate.md` (platform-universal) requires **≥80% line coverage**
-as a hard block on commit. HRSE2's actual gate today is `npm run lint` +
-`npm run build` (tsc) + `mypy` — no coverage tool runs at all. Either:
-- add a coverage step to HRSE2's verification gate and `hrse_manager.py`, or
-- explicitly override the threshold in HRSE2's own `.windsurfrules` (e.g.
-  "coverage measurement not yet implemented — gate is lint+build+mypy only")
-  so the platform doc doesn't silently overstate what's enforced.
+as a hard block on commit. Checked before deciding: HRSE2 has **no test
+suite at all** — no pytest, no vitest, no `.test.ts`/`.spec.ts` files
+anywhere; `backend/scripts/test_*.py` are one-off manual connection checks,
+not an automated suite. So this was never "wire up a coverage tool" — it was
+"write tests from zero, then gate on them."
 
-Doing nothing means the platform doc describes a gate that doesn't exist —
-worth deciding on purpose rather than by omission.
+Three options were considered: (A) build to the full 80%-coverage spec now
+(weeks of work, competes with feature work), (B) explicitly override the
+threshold in HRSE2's `.windsurfrules` and park test-suite-building
+indefinitely, (C) same override as B, plus a scoped pilot issue to start
+concretely rather than leave it fully unowned.
+
+**Decision: Option C.** `.windsurfrules` §VERIFICATION GATE now carries an
+explicit "Coverage gate — HRSE2-specific override" note stating the 80%
+threshold is not enforced and verification is lint+build+mypy+live-check
+only. A scoped pilot ticket — vitalharmony/hrse#135 — targets
+`app/services/relationship_health.py` specifically (documented as a pure
+decay engine with no I/O, the cleanest first unit-test target). Explicitly
+out of scope for #135: full repo-wide coverage, any frontend test tooling.
 
 ## 2. `.claude/rules/cypher.md` is intentionally NOT part of the platform sync
 
