@@ -1,0 +1,186 @@
+# Vital Harmony AI Platform — 3-Lane Protocol Specification
+
+**Owner:** Marc Mangus / Vital Harmony LLC
+**Status:** Draft v0.2 — core protocol content finalized; tooling (`sync_rules.py`) and per-project rollout in progress
+**Applies to:** All Vital Harmony projects (CymaGraph/HRSE2, Ke'nekted, LeasePAL, OWE Studio)
+**Platform repo:** https://github.com/vitalharmony/ai-platform (private)
+
+---
+
+## 1. Philosophy
+
+> *The platform IS the product.*
+
+This document specifies the Vital Harmony AI Development Platform — an
+Internal Developer Platform (IDP) for AI-assisted engineering. It defines
+the universal workflow, toolchain, governance rules, and golden paths every
+developer and AI agent on every project operates from.
+
+Grounded in [Platform Engineering](https://platformengineering.org)
+principles:
+- **Golden paths** make the right way the easy way — a paved road, not a wall.
+- **Self-service** — any developer onboards from a single bootstrapper script.
+- **Platform as product** — this repo is versioned, maintained, and treated
+  as a first-class product with its own issues and changelog.
+- **Paved roads, not walls** — the HITL gate and test guardrails exist to
+  accelerate, not block.
+
+---
+
+## 2. The 3-Lane Assembly Line
+
+Every developer on every project executes this loop locally before pushing a
+PR. Full agent-readable version: `3-lane-protocol.md`.
+
+```
+[GitHub Issue] ──> Dev Pulls Ticket ──> [Local 3-Lane Loop] ──> GitHub PR
+                                          │
+                                    Lane 1: Claude Code (Blueprint)
+                                    Lane 2: Devin Local (Muscle)
+                                    Lane 3: Devin AA (Control Gate) — local
+```
+
+**Lane 3 is local by design.** The Devin Autonomous Agent runs on the
+developer's own machine, with local `gh` CLI access to GitHub — there is no
+separate cloud-dispatched agent in this architecture. This matters for the
+gate design: Lane 3 needs the same local repo/issue access as Lanes 1 and 2,
+nothing more exotic.
+
+See `rules/universal-agent.md` and `rules/universal-claude.md` for the full
+directive set each lane operates under, and `rules/testing-gate.md` /
+`rules/frontend-ui-golden-path.md` for Lane 3's pass/fail thresholds.
+
+---
+
+## 3. Repository Structure
+
+### Platform Repo (`vitalharmony/ai-platform`, private)
+
+```
+ai-platform/
+├── ai-platform.md                  # this document
+├── 3-lane-protocol.md              # condensed operational protocol (agent-readable)
+├── rules/
+│   ├── universal-claude.md         # universal CLAUDE.md directives (all projects)
+│   ├── universal-agent.md          # universal .windsurfrules directives (all projects)
+│   ├── backend-python.md           # universal backend guardrails
+│   ├── frontend-typescript.md      # universal frontend guardrails
+│   ├── testing-gate.md             # Lane 3 gate spec + coverage thresholds
+│   └── frontend-ui-golden-path.md  # Greg's variant — visual regression + smoke
+├── templates/
+│   ├── lane1-handoff.md            # Lane 1 → 2 structured handoff template
+│   └── hitl-test-review.md         # Tech Lead HITL approval checklist
+└── sync_rules.py                   # bootstrapper — clone + symlink setup
+```
+
+### Per-Project Structure (each sovereign repo)
+
+```
+{project}/
+├── CLAUDE.md                       # project-specific overrides + pointer to ai-platform
+├── .windsurfrules                  # project-specific overrides
+├── .claude/rules/                  # path-scoped rules (fire on matching files)
+│   ├── backend-python.md           # → symlink to ai-platform/rules/backend-python.md
+│   └── frontend-typescript.md      # → symlink to ai-platform/rules/frontend-typescript.md
+└── (project may keep additional local-only rule files, e.g. a Cypher/Neo4j
+    addendum, that are NOT part of the platform sync because they don't
+    apply universally)
+```
+
+**Override precedence (lowest → highest):**
+```
+ai-platform/rules/universal-*.md
+  → ai-platform/rules/{language}.md
+    → {project}/.windsurfrules (project overrides)
+      → {project}/CLAUDE.md (session-specific context)
+```
+
+---
+
+## 4. `sync_rules.py` Bootstrapper
+
+**Purpose:** any developer on any project runs this once to wire their local
+machine into the platform, and again whenever platform rules change.
+
+**What it does:**
+1. Clones (or pulls) `vitalharmony/ai-platform` into `~/ai-platform/`.
+2. Creates symlinks from the project's `.claude/rules/` to the platform's
+   universal rule files.
+3. Verifies symlink integrity and reports any broken links.
+4. Prints a checklist of manual steps remaining (e.g. project-level
+   `CLAUDE.md` setup).
+
+**Usage:**
+```bash
+# One-time setup (from any project root)
+python3 ~/ai-platform/sync_rules.py --project .
+
+# Pull latest platform rules (run at session start or after platform updates)
+python3 ~/ai-platform/sync_rules.py --pull
+```
+
+**Platform:** macOS and Linux. Symlinks work natively on both. Windows is
+not currently supported — use WSL if needed.
+
+---
+
+## 5. Team Topology
+
+| Role | Person(s) | Responsibility |
+|---|---|---|
+| Platform owner | Marc | Owns `ai-platform`; sets golden paths; reviews platform PRs |
+| Feature delivery | Kyle (CymaGraph/HRSE2), Greg (Ke'nekted) | Consume golden paths; deliver against backlog; never modify platform rules directly |
+| Product demand | Shawn | Defines acceptance criteria on issues; approves shipped features |
+
+**Platform change policy:** only the Platform Team (Marc) merges PRs into
+`ai-platform`. Stream-aligned developers open issues or PRs against
+`ai-platform` to propose changes — they never push directly.
+
+**Ajit / multi-agent extension:** a possible future Lane 3 plugin interface
+for a custom multi-agent setup is tracked separately (issue #8) and is
+explicitly parked — involvement and framework are unconfirmed. Nothing in
+the core protocol depends on it.
+
+---
+
+## 6. Onboarding a New Developer
+
+1. Get collaborator access to `vitalharmony/ai-platform` and the relevant
+   project repo.
+2. Clone `ai-platform`: `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`.
+3. Clone the project repo and run: `python3 ~/ai-platform/sync_rules.py --project .`.
+4. Follow the project's `setup/first_time_setup.md` for environment setup.
+5. Read `3-lane-protocol.md` before pulling a first ticket.
+6. Pull a `tech-debt`-labeled issue as a first ticket (lowest stakes, real
+   codebase exposure).
+
+See `docs/onboarding-kyle.md` and `docs/onboarding-greg.md` for
+project-specific addenda.
+
+---
+
+## 7. Project Registry
+
+| Project | Repo | Status | Primary Stack |
+|---|---|---|---|
+| CymaGraph (HRSE2) | vitalharmony/hrse | Active — migration to 3-lane in progress | FastAPI + Neo4j + React 19 |
+| Ke'nekted | TBD | Active | TBD |
+| LeasePAL | TBD | Active | TBD |
+| OWE Studio | TBD | Active | TBD |
+
+---
+
+## 8. Open Items (pending before v1.0)
+
+- [x] Write `3-lane-protocol.md` (condensed agent-readable version of this doc)
+- [x] Write all `rules/` files
+- [x] Write both `templates/` files
+- [x] Implement `sync_rules.py`
+- [x] Migrate HRSE2 `.windsurfrules` and `CLAUDE.md` to local-override pattern
+- [ ] Add `sync_rules.py` step to HRSE2 `setup/first_time_setup.md`
+- [ ] Write Kyle-specific and Greg-specific onboarding addenda
+- [ ] Confirm OS for Greg and Kyle → validate symlink path assumptions
+- [ ] Define Ke'nekted, LeasePAL, OWE Studio project-level override structure
+      (repo location and stack are still TBD in the registry above)
+- [ ] Confirm Ajit's involvement/framework before touching issue #8 — parked,
+      not blocking v1.0
