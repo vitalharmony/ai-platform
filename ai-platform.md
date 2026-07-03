@@ -145,14 +145,25 @@ the core protocol depends on it.
 
 ## 6. Onboarding a New Developer
 
-1. Get collaborator access to `vitalharmony/ai-platform` and the relevant
-   project repo.
-2. Clone `ai-platform`: `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`.
+1. `ai-platform` is public — clone it directly, no invite needed:
+   `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`.
+2. Get collaborator access to your own project's repo (this is per-project,
+   not per-platform — see §7 and the security model below).
 3. Clone the project repo and run: `python3 ~/ai-platform/sync_rules.py --project .`.
 4. Follow the project's `setup/first_time_setup.md` for environment setup.
 5. Read `3-lane-protocol.md` before pulling a first ticket.
 6. Pull a `tech-debt`-labeled issue as a first ticket (lowest stakes, real
    codebase exposure).
+
+**Security model — credential isolation across projects:** each project's
+GitHub access is fully separate. There is no shared identity across
+projects — `vitalharmony`-authenticated tooling never touches
+`kenekted-platform` (or any other client repo), and vice versa. Project-level
+tools (Lane 2/3 agents, `gh` CLI) resolve their GitHub token from that
+project's own gitignored env file, never from a different project's token or
+a machine-global `gh auth login` session. `ai-platform` being public is the
+exception that makes this work cleanly — it's the one thing every project
+reads without needing any credential at all.
 
 See `docs/onboarding-kyle.md` and `docs/onboarding-greg.md` for
 project-specific addenda.
@@ -164,7 +175,7 @@ project-specific addenda.
 | Project | Repo | Status | Primary Stack |
 |---|---|---|---|
 | CymaGraph (HRSE2) | vitalharmony/hrse | Active — migration to 3-lane in progress | FastAPI + Neo4j + React 19 |
-| Ke'nekted | TBD | Active | TBD |
+| Ke'nekted | harmonicarchitect/kenekted-platform (private, `marc@kenekted.ai`) | Active | TBD |
 | LeasePAL | TBD | Active | TBD |
 | OWE Studio | TBD | Active | TBD |
 
