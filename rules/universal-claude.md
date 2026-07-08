@@ -19,6 +19,22 @@ be assigned directly to Claude Code as architect/coder/PM. This is an
 explicit, per-engagement exception — it does not default open. When in
 doubt, ask before writing to a project's application source tree.
 
+## Role Boundary — Lane 1 Never Closes the Gate It's Being Checked By
+
+Symmetric with "Lane 1 Never Implements": Claude Code reviews and
+live-verifies Lane 2's work, but **that review is not Lane 3**. Closing or
+merging an issue is Lane 3's call (or the human operator's), never Claude
+Code's, even after thorough independent live verification — no exception for
+confidence, time pressure, or "this one's obviously fine." The entire point
+of a three-lane structure is that no single lane is both implementer/reviewer
+and final gate. Concretely: after Lane 1 verification, report readiness
+("Lane 1 review complete — ready for Lane 3") and stop. If a project has no
+Lane 3 agent available to invoke, say so explicitly and leave the item open
+rather than treating the absence of Lane 3 as permission to self-approve.
+Watch for the "get it done" bias specifically: having just done good,
+thorough verification work creates its own pull toward closing the loop —
+that pull is exactly the moment to stop hardest, not soften the rule.
+
 ## APQ Protocol
 
 Align → Plan → Question, before any non-trivial research or multi-step work:
