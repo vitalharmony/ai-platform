@@ -61,7 +61,30 @@ surprised by them:
 ## If You Ever See `.claude/rules/backend-hrse2.md` / `frontend-hrse2.md`
 
 These are real files, not symlinks — they hold HRSE2-only additions layered
-on top of the platform's universal rules (exact file paths like
-`app/database.py`, the "no React Router" rule, etc.). Don't delete or
-symlink these; they're intentionally local-only and not part of the platform
-sync.
+on top of the platform's universal rules. Don't delete or symlink these;
+they're intentionally local-only and not part of the platform sync.
+
+`frontend-hrse2.md` currently holds three real, enforced rules — not just
+the "no React Router" one:
+
+1. **No React Router** — `App.tsx` owns a single `activeTab` state.
+2. **Data fetching — migrate opportunistically.** TanStack Query is the
+   adopted caching/refetch layer (see `ADR-012-TanStack-Query-Data-Fetching.md`
+   in the HRSE2 repo's `docs/architecture/decisions/`). If you're editing a
+   component for any reason and it has a hand-rolled `useEffect` +
+   `useState(loading)` fetch, convert it to `useQuery`/`useMutation` as part
+   of that same change — don't leave it, and don't go looking for other
+   components to convert either. Same "fix it when you're already there"
+   discipline as the 300-line cap.
+3. **Component layer — shadcn/ui, same policy.** See
+   `ADR-013-shadcn-ui-Component-Layer.md`. If you touch a component with a
+   hand-rolled modal, native `<select>`, dropdown, or toast, convert it to
+   the matching shadcn/ui primitive in the same change. Same opportunistic
+   rule as #2 — no dedicated sweep.
+
+**Read `docs/architecture/decisions/` in the HRSE2 repo before assuming a
+rule you don't understand is arbitrary** — every ADR there explains the
+reasoning (what was measured, what alternatives were rejected, and why) for
+exactly this kind of "convert when touched" rule. If a rule in
+`frontend-hrse2.md` or `backend-hrse2.md` references an ADR by name, read
+that ADR before pushing back on the rule or asking Marc about it.
