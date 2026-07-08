@@ -18,6 +18,12 @@ Condensed operational directives. For philosophy/rationale, see
 - Cites exact file(s) and line range(s) affected before writing the handoff.
 - Produces a Lane 1 Handoff Artifact (`templates/lane1-handoff.md`).
 - Includes one concrete test case per requirement in the handoff.
+- **Posts the handoff as a comment on the GitHub issue itself** — not just
+  in chat. The issue is the permanent record: root cause, prompt, and (once
+  Lane 2/3 finish) the diff and Lane 3 gate result all live on the same
+  issue. This is deliberate — it's the raw material for any future
+  cross-issue pattern analysis (recurring bug classes, handoff-quality vs.
+  first-pass-success correlation), not just a courtesy copy.
 - Never guesses at an ambiguous spec — stops and asks the Tech Lead.
 - Does not write production code directly (exception: explicit platform/
   tooling assignments — see `rules/universal-claude.md`).
