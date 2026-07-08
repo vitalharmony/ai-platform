@@ -101,6 +101,19 @@ Skipping a step is a protocol violation.
 If fixing multiple bugs, address each as a numbered item. Do not infer or
 invent a bug that was not explicitly described.
 
+**No ad-hoc fixes, ever — this includes data, not just code.** A bug always
+gets a tracked issue and goes through this protocol and the 3-lane loop,
+full stop — never a quick fix applied in the moment because it's small,
+convenient, or already in front of you. This applies even when the "fix" is
+just deleting or editing bad data through an existing UI affordance (e.g. an
+already-provided delete button) rather than touching code: correcting the
+symptom outside the tracked, verified pipeline is exactly as much a
+violation as patching source directly. If you notice bad data while
+diagnosing a bug, describe it in the issue as evidence, then leave it alone
+— the fix (including any data correction) ships through the same
+implementation + Lane 3 verification as the code change, not as a side
+action while you happen to be looking at it.
+
 ## SURGICAL CHANGES (KARPATHY PRINCIPLE)
 
 Make the minimum change that accomplishes the stated task. Do not refactor,
