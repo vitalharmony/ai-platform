@@ -49,11 +49,15 @@ Condensed operational directives. For philosophy/rationale, see
   2's code before writing its test spec.** This now explicitly includes
   **Lane 2's own implementation-report comment on the issue thread** — Lane
   1's handoff and Lane 2's diff summary both post to the same issue (see
-  Lane 1/Lane 2 sections above), so Lane 3 must read only the issue body
-  and Lane 1's handoff comment when deriving its test spec, and must not
-  open or be influenced by any Lane 2 comment already on the thread until
-  after that spec is written and approved. Co-locating every lane's output
-  on one issue is a deliberate convenience (it's what lets Lane 1 review by
+  Lane 1/Lane 2 sections above), so when deriving its test spec Lane 3
+  reads only: the issue body, Lane 1's original handoff comment, and (if
+  present) a second Lane 1 comment specifically addressed to Lane 3 —
+  written after Lane 2 finishes, carrying any caveats the HITL gate turned
+  up (e.g. "the named test-pair's data has since changed, construct a
+  fixture instead" — a real example from #153). Lane 3 must not open or be
+  influenced by any Lane 2 comment already on the thread until after its
+  spec is written and approved. Co-locating every lane's output on one
+  issue is a deliberate convenience (it's what lets Lane 1 review by
   reading the thread instead of relaying pasted text) — it must not become
   a backdoor that lets Lane 3 anchor on Lane 2's self-report.
 - Writes a test spec from the issue's acceptance criteria.
@@ -78,20 +82,53 @@ GitHub issue thread — confirmed working in practice. This lets the human
 operator (HITL) drive the loop with short, canonical trigger phrases
 instead of relaying pasted content between tools. Every trigger names the
 issue explicitly (`#N`) — multiple issues can be in flight at once, and an
-unnumbered trigger is ambiguous.
+unnumbered trigger is ambiguous. Some triggers go to Lane 1; others go
+directly to Lane 2 or Lane 3 in their own respective interfaces, and Lane 1
+never sees them or acts on them.
 
-The full loop has triggers directed at different lanes — only some of them
-go to Lane 1. The others go to Lane 2 or Lane 3 directly, in their own
-respective interfaces, and Lane 1 never sees them or acts on them:
-
-| HITL says | Directed to | What happens |
-|---|---|---|
-| *(none — Lane 1 posts its handoff unprompted once diagnosis is done)* | — | Lane 1 writes the handoff, posts it as a comment on the issue, and also displays it in chat (per the platform's display-prompts-directly convention). |
-| **"Implement #N"** | Lane 2 | Lane 2 fetches the issue and Lane 1's handoff comment from GitHub itself (see Lane 2 section above) and implements it, posting its own completion report as a comment on the same issue. Lane 1 is not involved in triggering this step and does not see it happen. |
-| **"Lane 2 done for #N"** | Lane 1 | Reads #N's Lane 2 comment. Cross-checks it against the handoff's affected-files list and acceptance criteria — flags scope creep if the diff touches anything outside what was specified. Independently spot-verifies at least one significant behavioral claim live (a real request/response, a direct DB query, a log line) — never just re-reads Lane 2's own description and calls it confirmed. Responds with either (a) "confirmed, drafting Lane 3 prompt" plus the prompt (posted to the issue and shown in chat), or (b) a specific correction Lane 2 needs to make, without proceeding to Lane 3. |
-| **"Test #N"** | Lane 3 | Lane 3 fetches the issue independently (body and Lane 1's handoff comment only — not Lane 2's comment, per the Lane 3 section above), derives its test spec, gets HITL approval, executes, and posts its gate report as a comment on the same issue. Lane 1 is not involved in triggering this step and does not see it happen. |
-| **"Lane 3 done for #N"** | Lane 1 | Reads #N's Lane 3 gate comment. Confirms every pass/fail claim is backed by live execution, not source-code reasoning. Checks for protocol adherence specific to this handoff pattern: did Lane 3 avoid reading Lane 2's comment before writing its test spec, and did it avoid implementing any fix itself during its style/refactor pass (see `rules/testing-gate.md`). Independently spot-verifies at least one claim live if anything in the report is surprising, high-stakes, or contradicts prior known state. Responds with a recommendation only — "clean, recommend close" or "passed but flagging X before you decide" — never a unilateral close. |
-| **"Close #N"** | Lane 1 | Posts a closing summary comment (referencing the gate evidence) and closes the issue. This is the only trigger that results in a close, and it is never self-initiated by Lane 1 regardless of how clean a prior gate looked — matches the existing rule that closing is the HITL's or Lane 3's call, zero exceptions. |
+1. **Lane 1** diagnoses and posts a handoff comment on issue #N (and
+   displays it in chat). No trigger needed — this happens unprompted once
+   diagnosis is done.
+2. **HITL says "Implement #N"** (→ Lane 2). Lane 2 fetches the issue and
+   Lane 1's handoff comment from GitHub itself and implements it, posting
+   its own completion report as a comment on #N.
+3. **HITL says "Lane 2 done for #N"** (→ Lane 1). Lane 1 reads #N's Lane 2
+   comment, cross-checks it against the handoff's affected-files list and
+   acceptance criteria (flagging scope creep if the diff touches anything
+   outside what was specified), and independently spot-verifies at least
+   one significant behavioral claim live — never just re-reads Lane 2's own
+   description and calls it confirmed.
+   - **If a problem is found:** Lane 1 posts a correction comment on #N
+     specifying exactly what Lane 2 needs to fix, and reports this to HITL
+     instead of proceeding. Once addressed, HITL re-triggers with
+     **"Implement #N"** again (or an equivalent nudge to Lane 2), looping
+     back to step 2.
+   - **If confirmed clean:** Lane 1 drafts a second comment addressed to
+     Lane 3 (carrying any caveats the review turned up) and posts it to
+     #N, then tells HITL it's ready.
+4. **HITL says "Test #N"** (→ Lane 3). Lane 3 independently fetches the
+   issue body, Lane 1's original handoff comment, and Lane 1's
+   Lane-3-addressed comment from step 3 — never Lane 2's comment — derives
+   a test spec, and submits it for HITL approval
+   (`templates/hitl-test-review.md`) before executing anything. After
+   approval, Lane 3 executes and posts its gate report as a comment on #N.
+5. **HITL says "Lane 3 done for #N"** (→ Lane 1). Lane 1 reads #N's Lane 3
+   gate comment, confirms every claim is backed by live execution (not
+   source-code reasoning), checks for protocol adherence (Lane 3 avoided
+   Lane 2's comment before writing its spec, and did not implement any fix
+   itself during its style/refactor pass — see `rules/testing-gate.md`),
+   and independently spot-verifies at least one claim live if anything is
+   surprising, high-stakes, or contradicts prior known state.
+   - **If a problem is found:** Lane 1 reports the specific issue to HITL
+     with a recommendation on whether it routes back to Lane 2 (an
+     implementation bug — loop to step 2) or requires Lane 3 to re-test (a
+     gate/spec issue — loop to step 4). HITL decides which.
+   - **If confirmed clean:** Lane 1 recommends closing — never a
+     unilateral close.
+6. **HITL says "Close #N"** (→ Lane 1). Lane 1 posts a closing summary
+   comment (referencing the gate evidence) and closes the issue. This is
+   the only trigger that results in a close, and it is never self-initiated
+   by Lane 1 regardless of how clean a prior gate looked.
 
 ## Escalation
 
