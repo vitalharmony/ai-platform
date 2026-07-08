@@ -101,8 +101,9 @@ never sees them or acts on them.
    - **If a problem is found:** Lane 1 posts a correction comment on #N
      specifying exactly what Lane 2 needs to fix, and reports this to HITL
      instead of proceeding. Once addressed, HITL re-triggers with
-     **"Implement #N"** again (or an equivalent nudge to Lane 2), looping
-     back to step 2.
+     **"Reimplement #N"** (distinct from the first-pass **"Implement #N"**
+     — this word specifically signals a correction loop, not new work),
+     looping back to step 2.
    - **If confirmed clean:** Lane 1 drafts a second comment addressed to
      Lane 3 (carrying any caveats the review turned up) and posts it to
      #N, then tells HITL it's ready.
@@ -121,8 +122,10 @@ never sees them or acts on them.
    surprising, high-stakes, or contradicts prior known state.
    - **If a problem is found:** Lane 1 reports the specific issue to HITL
      with a recommendation on whether it routes back to Lane 2 (an
-     implementation bug — loop to step 2) or requires Lane 3 to re-test (a
-     gate/spec issue — loop to step 4). HITL decides which.
+     implementation bug — HITL says **"Reimplement #N"**, loop to step 2)
+     or requires Lane 3 to re-test (a gate/spec issue — HITL says
+     **"Retest #N"**, distinct from the first-pass **"Test #N"**, loop to
+     step 4). HITL decides which.
    - **If confirmed clean:** Lane 1 recommends closing — never a
      unilateral close.
 6. **HITL says "Close #N"** (→ Lane 1). Lane 1 posts a closing summary
