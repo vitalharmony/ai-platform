@@ -66,6 +66,22 @@ Condensed operational directives. For philosophy/rationale, see
 - Every pass/fail claim must be backed by live execution (request/response,
   log line, before/after count) — a source-code citation is not evidence.
 
+## HITL Gate Language
+
+Lane 1 (Claude Code) and Lane 3 (Devin AA) can both post directly to the
+GitHub issue thread — confirmed working in practice. This lets the human
+operator (HITL) drive the loop with short, canonical trigger phrases
+instead of relaying pasted content between tools. Every trigger names the
+issue explicitly (`#N`) — multiple issues can be in flight at once, and an
+unnumbered trigger is ambiguous.
+
+| HITL says | Lane 1 does |
+|---|---|
+| *(none — Lane 1 posts its handoff unprompted once diagnosis is done)* | Writes the handoff, posts it as a comment on the issue, and also displays it in chat (per the platform's display-prompts-directly convention). |
+| **"Lane 2 done for #N"** | Reads #N's Lane 2 comment. Cross-checks it against the handoff's affected-files list and acceptance criteria — flags scope creep if the diff touches anything outside what was specified. Independently spot-verifies at least one significant behavioral claim live (a real request/response, a direct DB query, a log line) — never just re-reads Lane 2's own description and calls it confirmed. Responds with either (a) "confirmed, drafting Lane 3 prompt" plus the prompt (posted to the issue and shown in chat), or (b) a specific correction Lane 2 needs to make, without proceeding to Lane 3. |
+| **"Lane 3 done for #N"** | Reads #N's Lane 3 gate comment. Confirms every pass/fail claim is backed by live execution, not source-code reasoning. Checks for protocol adherence specific to this handoff pattern: did Lane 3 avoid reading Lane 2's comment before writing its test spec, and did it avoid implementing any fix itself during its style/refactor pass (see `rules/testing-gate.md`). Independently spot-verifies at least one claim live if anything in the report is surprising, high-stakes, or contradicts prior known state. Responds with a recommendation only — "clean, recommend close" or "passed but flagging X before you decide" — never a unilateral close. |
+| **"Close #N"** | Posts a closing summary comment (referencing the gate evidence) and closes the issue. This is the only trigger that results in a close, and it is never self-initiated by Lane 1 regardless of how clean a prior gate looked — matches the existing rule that closing is the HITL's or Lane 3's call, zero exceptions. |
+
 ## Escalation
 
 Any lane escalates to the Tech Lead (human) rather than guessing, looping, or
