@@ -28,7 +28,16 @@ for the UI-only variant.
    failure on the same root cause escalates to the Tech Lead rather than
    retrying further.
 5. Once tests pass, Lane 3 performs a style/refactor pass per the project's
-   `.windsurfrules`, then is unblocked to commit.
+   `.windsurfrules`, then is unblocked to commit. **This pass is
+   report-only — Lane 3 identifies violations, it does not fix them,
+   whether the violation is pre-existing or was introduced by the change
+   just gated.** Implementing a fix (even a small one, even one that only
+   compresses lines to get back under a cap) is Lane 2's job. If the
+   gated change itself introduced a violation (e.g. pushed a file over the
+   line cap), Lane 3 reports it as a gate finding for the Tech Lead to
+   route back to Lane 1/Lane 2 — it does not edit the file itself to
+   clear its own finding. See `rules/universal-agent.md`'s no-ad-hoc-fixes
+   rule — this applies to Lane 3 exactly as it does to Lane 1.
 6. If any check truly cannot be live-verified in the current environment
    (e.g. no browser available for a UI check), Lane 3 must say so explicitly
    rather than substituting a source-code citation — a partial, honest result
