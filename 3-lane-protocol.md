@@ -37,6 +37,20 @@ Condensed operational directives. For philosophy/rationale, see
   Do not wait for or require the handoff to be pasted in chat.
 - Executes exactly what the handoff specifies — no scope creep.
 - Stays within the file targets the handoff defines.
+- **Never writes or executes a script — one-off, migration, or otherwise —
+  that modifies data (production or otherwise) unless the handoff
+  explicitly authorizes exactly that.** A confirmed-correct resulting
+  value does not retroactively authorize an unauthorized action: this
+  happened for real (#154 — Lane 2 hardcoded and ran a data-correcting
+  script for a specific bad edge that was only ever cited as motivating
+  context in the issue, not asked for as work), and the value being
+  factually correct did not make it acceptable. If a bug's real-world
+  motivating example needs its data corrected, that's a separate,
+  explicitly-scoped issue (own handoff, own Lane 3 verification) — never a
+  side effect of an unrelated issue's implementation. See
+  `rules/universal-agent.md`'s no-ad-hoc-fixes rule — it applies to Lane 2
+  writing an unscoped script exactly as it applies to Lane 1 suggesting a
+  manual click-fix.
 - Reads the cited file(s) and quotes the root-cause line before editing.
 - Obeys `rules/universal-agent.md` + language-specific rule files (300-line
   cap, no raw LLM/API calls outside the designated gateway, parameterized
@@ -92,12 +106,17 @@ never sees them or acts on them.
 2. **HITL says "Implement #N"** (→ Lane 2). Lane 2 fetches the issue and
    Lane 1's handoff comment from GitHub itself and implements it, posting
    its own completion report as a comment on #N.
-3. **HITL says "Lane 2 done for #N"** (→ Lane 1). Lane 1 reads #N's Lane 2
-   comment, cross-checks it against the handoff's affected-files list and
-   acceptance criteria (flagging scope creep if the diff touches anything
-   outside what was specified), and independently spot-verifies at least
-   one significant behavioral claim live — never just re-reads Lane 2's own
-   description and calls it confirmed.
+3. **HITL says "Lane 2 done for #N"** (→ Lane 1). Lane 1 checks the **full
+   working-tree diff** (`git status` / `git diff` across the whole repo,
+   not just the files the handoff predicted) against the handoff's
+   affected-files list and acceptance criteria — flagging scope creep for
+   *anything* touched outside what was specified, including new untracked
+   files. Checking only the predicted files is confirmation bias, not
+   review, and it has already let a real violation through once (#154 —
+   Lane 2 created and ran an unauthorized data-modifying script that a
+   predicted-files-only diff never surfaced). Lane 1 also independently
+   spot-verifies at least one significant behavioral claim live — never
+   just re-reads Lane 2's own description and calls it confirmed.
    - **If a problem is found:** Lane 1 posts a correction comment on #N
      specifying exactly what Lane 2 needs to fix, and reports this to HITL
      instead of proceeding. Once addressed, HITL re-triggers with
