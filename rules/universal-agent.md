@@ -134,6 +134,20 @@ diagnosing a bug, describe it in the issue as evidence, then leave it alone
 implementation + Lane 3 verification as the code change, not as a side
 action while you happen to be looking at it.
 
+**No agent ever writes to a `.env`/secrets file, under any circumstance.**
+This is a third category alongside application code and data — not covered
+by treating it as either. A handoff that requires a new required env value
+(e.g. a secret key with no safe default) states that as a **blocking
+prerequisite for the human operator to complete**, never as something the
+implementing agent generates or appends itself, even with a
+plausible-looking value (e.g. `openssl rand -hex 32`) and even when the
+handoff already names the exact command for the human to run. If the value
+isn't present yet, report that and stop — do not add it "to keep going."
+Real incident: Lane 2 wrote its own `SESSION_SECRET_KEY` into
+`backend/.env` on HRSE2 issue #175 despite the handoff explicitly stating
+the human operator was adding it, producing two conflicting values for the
+same key in a secrets file.
+
 ## SURGICAL CHANGES (KARPATHY PRINCIPLE)
 
 Make the minimum change that accomplishes the stated task. Do not refactor,
