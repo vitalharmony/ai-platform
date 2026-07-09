@@ -165,7 +165,14 @@ Condensed operational directives. For philosophy/rationale, see
   around a variable-interpolation problem instead of fixing the invocation
   or reporting it). Marc: "L3 is falling into 'git 'er done' bias mode more
   than L1 or L2 and it shouldn't be fixing ANYTHING EVER, only running
-  tests, scripts, or refactoring."
+  tests, scripts, or refactoring." **Why this matters structurally, not just
+  as a boundary rule**: Marc: "we WANT the tests to fail if L1/L2 built
+  something wrong, we don't want it intervening and fixing it, defeats the
+  purpose of the protocol." Lane 3's entire value is as an *independent*
+  check — a test that gets silently patched by the tester the moment it
+  fails can never fail meaningfully again, which makes the whole gate
+  structure pointless. A failing test is the protocol working correctly,
+  not a problem for Lane 3 to make go away.
 - 3 auto-fix attempts max on a single root cause (test-spec issues only, per
   above); 4th failure escalates to Tech Lead instead of retrying.
 - After tests pass, performs a style/refactor pass per the project's
