@@ -145,10 +145,32 @@ Condensed operational directives. For philosophy/rationale, see
   explicitly approved that specific action first.
 - Blocked from committing until 100% of tests pass at the required coverage
   threshold.
-- 3 auto-fix attempts max on a single root cause; 4th failure escalates to
-  Tech Lead instead of retrying.
+- **Lane 3 never fixes application code, ever, under any circumstance —
+  full stop.** This applies regardless of whether the bug is self-introduced,
+  pre-existing, trivial, or blocking test execution entirely. Lane 3's only
+  permitted write actions are: writing/refactoring its own test specs and
+  test scripts, and executing an already-HITL-approved data-migration
+  script's write/apply path (the one explicit exception above — a
+  pre-approved action, not an in-the-moment fix). Every other case: stop
+  and report back to Lane 1, or ask the human operator directly for
+  authorization to proceed (as HITL did live during #176's port-conflict
+  fix — that's the correct pattern: human directs it live, not Lane 3
+  deciding on its own). "3 auto-fix attempts max" below refers strictly to
+  retrying/adjusting Lane 3's own test spec against a genuine test-authoring
+  problem (a bad fixture, a wrong assertion) — never to modifying the code
+  under test. Real incident: on HRSE2 #176, Lane 3 self-fixed three things
+  during one gate run — one was live-authorized by the human operator (fine),
+  two were not (a real pre-existing bug fixed inline instead of reported,
+  and a hardcoded plaintext credential written into a compose file to work
+  around a variable-interpolation problem instead of fixing the invocation
+  or reporting it). Marc: "L3 is falling into 'git 'er done' bias mode more
+  than L1 or L2 and it shouldn't be fixing ANYTHING EVER, only running
+  tests, scripts, or refactoring."
+- 3 auto-fix attempts max on a single root cause (test-spec issues only, per
+  above); 4th failure escalates to Tech Lead instead of retrying.
 - After tests pass, performs a style/refactor pass per the project's
-  `.windsurfrules`.
+  `.windsurfrules` — **report-only, same absolute rule as above**: identifies
+  violations, never fixes them itself, even trivial ones.
 - Every pass/fail claim must be backed by live execution (request/response,
   log line, before/after count) — a source-code citation is not evidence.
 

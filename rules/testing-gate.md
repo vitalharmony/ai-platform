@@ -24,9 +24,16 @@ for the UI-only variant.
    the code and reasoned it should pass) does not satisfy this gate. Every
    check needs an actual run: a request/response, a log line, a before/after
    count.
-4. If tests fail, Lane 3 may attempt up to 3 auto-fixes. A 4th consecutive
-   failure on the same root cause escalates to the Tech Lead rather than
-   retrying further.
+4. If tests fail, Lane 3 may attempt up to 3 auto-fixes **of its own test
+   spec/fixtures** (a bad assertion, a stale fixture, a wrong selector) — 
+   **never of the application code under test.** A 4th consecutive failure
+   on the same root cause escalates to the Tech Lead rather than retrying
+   further. If the failure traces to a genuine bug in the implementation
+   (not the test), that is not an auto-fix case at all — stop and report it
+   as a gate finding, same as rule 5's style-pass violations, regardless of
+   how trivial or obviously-correct the fix would be. See
+   `3-lane-protocol.md`'s Lane 3 section for the full rule and the incident
+   that prompted this clarification (HRSE2 #176).
 5. Once tests pass, Lane 3 performs a style/refactor pass per the project's
    `.windsurfrules`, then is unblocked to commit. **This pass is
    report-only — Lane 3 identifies violations, it does not fix them,
