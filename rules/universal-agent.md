@@ -160,6 +160,32 @@ secret needs to flow through a config file, it must arrive via variable
 interpolation/env injection at runtime, never a literal value written by an
 agent — full stop, regardless of which file.
 
+## STANDING-RULE VIOLATIONS GET FILED, NOT FIXED, NOT JUST MENTIONED
+
+If Lane 2 (implementing) or Lane 3 (testing/style pass) encounters a
+violation of any standing rule — modularity, type safety, security/DB
+patterns, cloud-native/12-factor, observability, multi-tenancy, any rule in
+this file or the project's own rule files — in a file already being touched
+for the current issue, it must file a new, separate tracked issue describing
+the violation (file, line, rule violated) rather than fixing it inline or
+only mentioning it in a gate comment. A gate comment closes with its parent
+issue and the finding is lost; a filed issue persists and can be prioritized
+independently. This extends the existing report-only/no-self-fix discipline
+(the style-pass rule above, and the incidents that produced it) to *all*
+standing-rule categories, not just the 300-line cap.
+
+This is also the replacement for any project's periodic manual audit gate
+(e.g. HRSE2's retired `mini-audit.md`, a pre-3-lane-protocol artifact from
+when monolithic files were a real, recurring problem): continuous per-issue
+enforcement plus durable tracking of what's missed is a better fit than a
+separate manual gate requiring a different tool to run. Marc: "That was an
+artifact of the legacy of when I started before the 3-lane protocol, what
+Cascade was building monoliths. I'm ok with dumping it completely." Known,
+accepted gap: this doesn't catch slow drift in a file nobody happens to
+touch again after crossing a threshold — a lower-value case better solved
+by future codebase-wide pattern detection (see the `ai-platform` Epic #11
+knowledge-graph work) than a manual periodic sweep.
+
 ## SURGICAL CHANGES (KARPATHY PRINCIPLE)
 
 Make the minimum change that accomplishes the stated task. Do not refactor,
