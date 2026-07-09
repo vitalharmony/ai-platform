@@ -11,6 +11,11 @@ Per prior notes: NDA/GitHub/email access is done. Still outstanding —
 these; they're out-of-band (the DB dump is gitignored and shared separately
 from the repo per `setup/first_time_setup.md`).
 
+**When you do the `.env` setup (Section 4a of `first_time_setup.md`): as of
+#175, `SESSION_SECRET_KEY` has no insecure fallback anymore — the backend
+won't boot without it, and it's per-machine (generate your own, don't copy
+Marc's). The exact command is in that section.**
+
 ## HRSE2-Specific Overrides You Need to Know
 
 These are real deviations from the generic platform description — don't be
