@@ -68,6 +68,26 @@ hardcodes a model ID. Model/tier selection is env-first. LLM output is
 untrusted input — parse and validate it, never `eval` it or raw-string-match
 it for control flow.
 
+## LIVE VERSIONED VALUES (MODEL IDS, API VERSIONS, SDK SIGNATURES)
+
+Any value that names a specific version of an external, actively-evolving
+system — a model ID string, an API version, an SDK method signature/import
+path — is not something training data can be trusted to produce correctly.
+These strings look exactly as plausible when fabricated as when real, and
+training data goes stale the moment a vendor ships a new version.
+
+- If a handoff or fix requires such a value and it is not already present
+  elsewhere in the codebase as a working reference, verify it live (vendor
+  docs, WebFetch/WebSearch, or an existing skill's authoritative reference
+  file) before writing it — never recall it from training.
+- Default to preserving the existing working value unless the task
+  explicitly calls for a version change. A handoff that doesn't mention
+  changing a model/version string is not license to "correct" it — that is
+  scope creep on top of an unverified guess, the worst combination.
+- If verification isn't possible in the moment (no web access, no
+  authoritative reference), say so explicitly and flag the value as
+  unverified rather than silently substituting a plausible-looking guess.
+
 ## API ABSTRACTION (FRONTEND)
 
 If a project has a frontend that calls its own backend, all such calls route
