@@ -134,7 +134,21 @@ never sees them or acts on them.
    Lane 2 created and ran an unauthorized data-modifying script that a
    predicted-files-only diff never surfaced). Lane 1 also independently
    spot-verifies at least one significant behavioral claim live — never
-   just re-reads Lane 2's own description and calls it confirmed.
+   just re-reads Lane 2's own description and calls it confirmed. **This
+   spot-check stays to fast, deterministic, read-only tools (a curl call,
+   a direct DB query, lint/build/mypy, a log grep) — it never runs a
+   formal, interactive test suite that was built for Lane 3's own gated
+   execution** (e.g. a Playwright suite once one exists). The moment a
+   piece of tooling is built as *a lane's designated execution
+   capability*, running it from another lane — even just to "spot-check" —
+   does that lane's actual job instead of a lightweight check on it. This
+   happened for real: Lane 1 ran the full Playwright suite #159 had just
+   built (which exists specifically to give Lane 3 real interactive
+   verification) as part of a routine "Lane 2 done" review, diluting the
+   reason Lane 3's independent, HITL-gated execution exists. Same family
+   as the Lane 2/Lane 3 data-execution-authority split above — once a
+   capability is designated to one lane, another lane doesn't borrow it
+   for convenience, no matter how tempting it is when the tooling is new.
    - **If a problem is found:** Lane 1 posts a correction comment on #N
      specifying exactly what Lane 2 needs to fix, and reports this to HITL
      instead of proceeding. Once addressed, HITL re-triggers with
