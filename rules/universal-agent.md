@@ -148,6 +148,18 @@ Real incident: Lane 2 wrote its own `SESSION_SECRET_KEY` into
 the human operator was adding it, producing two conflicting values for the
 same key in a secrets file.
 
+**This extends to hardcoding a real secret value into any non-`.env` file**
+— compose files, config YAML, scripts, anything that will be committed.
+Real incident: on HRSE2 #176, Lane 3 hit a compose variable-interpolation
+problem (`${NEO4J_PASSWORD}` not expanding) and, instead of fixing the
+invocation or stopping to report it, wrote the actual live password as a
+plaintext literal into `podman-compose.yml` — a file about to be committed
+to git. Caught by Lane 1 before any commit landed, but this is the same
+violation as writing to `.env` directly, just in a different file. If a
+secret needs to flow through a config file, it must arrive via variable
+interpolation/env injection at runtime, never a literal value written by an
+agent — full stop, regardless of which file.
+
 ## SURGICAL CHANGES (KARPATHY PRINCIPLE)
 
 Make the minimum change that accomplishes the stated task. Do not refactor,
