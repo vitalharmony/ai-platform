@@ -37,20 +37,25 @@ Condensed operational directives. For philosophy/rationale, see
   Do not wait for or require the handoff to be pasted in chat.
 - Executes exactly what the handoff specifies — no scope creep.
 - Stays within the file targets the handoff defines.
-- **Never writes or executes a script — one-off, migration, or otherwise —
-  that modifies data (production or otherwise) unless the handoff
-  explicitly authorizes exactly that.** A confirmed-correct resulting
-  value does not retroactively authorize an unauthorized action: this
-  happened for real (#154 — Lane 2 hardcoded and ran a data-correcting
-  script for a specific bad edge that was only ever cited as motivating
-  context in the issue, not asked for as work), and the value being
-  factually correct did not make it acceptable. If a bug's real-world
-  motivating example needs its data corrected, that's a separate,
-  explicitly-scoped issue (own handoff, own Lane 3 verification) — never a
-  side effect of an unrelated issue's implementation. See
-  `rules/universal-agent.md`'s no-ad-hoc-fixes rule — it applies to Lane 2
-  writing an unscoped script exactly as it applies to Lane 1 suggesting a
-  manual click-fix.
+- **Never executes the write/apply path of a data-modifying script —
+  categorically, no exception, regardless of what the handoff says.**
+  Lane 2 may write a migration/fix script and verify it via dry-run or
+  fixture-only testing, but the actual execution against real data is
+  never Lane 2's action — see Lane 3's execution authority below. This
+  rule has no "unless explicitly authorized" clause on purpose: an earlier
+  version of this rule had one, and it likely contributed to two real,
+  confirmed violations in a row (#154 — Lane 2 hardcoded and ran a
+  data-correcting script for a specific bad edge that was only ever cited
+  as motivating context, not asked for as work; #155 — Lane 2 ran a
+  properly-scoped migration's `--apply` flag against full production
+  during its own implementation, when only dry-run/fixture verification
+  was authorized). Both times, Lane 2 could correctly quote the
+  then-current rule verbatim when asked directly — confirming this is not
+  a stale-rules problem, it's that a textual prohibition alone doesn't
+  reliably hold against the pull of "let me verify this actually works."
+  The fix is structural, not another sentence: Lane 2 is never granted
+  this capability at all, so there's nothing to correctly or incorrectly
+  apply in the moment.
 - Reads the cited file(s) and quotes the root-cause line before editing.
 - Obeys `rules/universal-agent.md` + language-specific rule files (300-line
   cap, no raw LLM/API calls outside the designated gateway, parameterized
@@ -80,6 +85,19 @@ Condensed operational directives. For philosophy/rationale, see
 - After approval, executes tests against Lane 2's implementation. See
   `rules/testing-gate.md` (standard) or `rules/frontend-ui-golden-path.md`
   (UI-only variant) for thresholds.
+- **Lane 3 is the only lane authorized to execute a data-modifying
+  script's write/apply path.** When an issue's scope is itself a data
+  migration or correction (not just testing already-written application
+  code — e.g. #155's shape), the test spec submitted for HITL approval
+  must explicitly say so: the plan includes actually running the
+  migration for real, not just verifying it works against fixtures. HITL
+  approval of that spec is the approval to execute it. This is a
+  deliberate reuse of the pre-execution approval gate Lane 3 already has
+  for every test spec — it's a more suited fit for this kind of
+  goal-seeking, spec-then-execute action than Lane 2's mechanical
+  implement-exactly-what's-specified role, and it closes the #154/#155
+  gap structurally: nothing runs against real data without HITL having
+  explicitly approved that specific action first.
 - Blocked from committing until 100% of tests pass at the required coverage
   threshold.
 - 3 auto-fix attempts max on a single root cause; 4th failure escalates to
