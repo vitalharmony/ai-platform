@@ -1,0 +1,38 @@
+name: Feature Request
+description: Propose a new rule, template, tooling capability, or platform-wide improvement
+labels: ["feature"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Which project(s) would this affect?
+      description: ai-platform's rules/templates are consumed by multiple projects — this helps assess blast radius.
+      options:
+        - HRSE2 / CymaGraph
+        - Ke'nekted
+        - ai-platform itself (sync_rules.py, templates, etc.)
+        - All / platform-wide
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem or gap is this solving?
+      description: The motivation — what's missing or painful today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: What you'd want built or changed, as concretely as you can describe it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about and why this one seems better, if applicable.
+    validations:
+      required: false

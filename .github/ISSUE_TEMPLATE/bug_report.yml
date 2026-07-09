@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report a problem with a platform rule, template, or tooling script in ai-platform
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Which project were you using this in?
+      description: ai-platform's rules/templates are consumed by multiple projects — this helps route and reproduce the issue.
+      options:
+        - HRSE2 / CymaGraph
+        - Ke'nekted
+        - ai-platform itself (sync_rules.py, templates, etc.)
+        - Other / not project-specific
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands or actions taken, in order.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Rule file/line, sync_rules.py output, error messages, links to related issues.
+    validations:
+      required: false
