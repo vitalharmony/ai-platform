@@ -10,6 +10,14 @@
       golden path — see `rules/testing-gate.md` / `rules/frontend-ui-golden-path.md`)
 - [ ] Test spec was written from the issue alone — confirm Lane 3 did not
       cite Lane 2's implementation as the basis for any test case
+- [ ] **Does this spec include executing a data-modifying script's
+      write/apply path against real data?** If yes, say so explicitly
+      here and confirm the HITL understands approval of this spec *is*
+      approval to execute it — Lane 3 is the only lane authorized to run
+      that action (see `3-lane-protocol.md`, Lane 3 section). If no,
+      leave this unchecked; Lane 2's implementation must already be
+      dry-run/fixture-verified only.
+  - Data-modifying execution in this spec? Yes ☐ / No ☐
 
 **Approved:** _______  **Date:** _______
 
