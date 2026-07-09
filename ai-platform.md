@@ -50,6 +50,12 @@ See `rules/universal-agent.md` and `rules/universal-claude.md` for the full
 directive set each lane operates under, and `rules/testing-gate.md` /
 `rules/frontend-ui-golden-path.md` for Lane 3's pass/fail thresholds.
 
+**Lane 3 also has its own local directives file**, outside this repo and not
+synced by `sync_rules.py`: `~/.config/devin/AGENTS.md` (machine-specific,
+not per-project). Direct corrections to Lane 3's own behavior go there;
+Devin AA also writes to it itself. See `3-lane-protocol.md`'s Lane 3 section
+for the full note.
+
 ---
 
 ## 3. Repository Structure

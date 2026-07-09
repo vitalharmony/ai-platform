@@ -91,6 +91,13 @@ Condensed operational directives. For philosophy/rationale, see
 
 ## Lane 3 — Devin Autonomous Agent (Control Gate)
 
+- **Own directives file: `~/.config/devin/AGENTS.md`** (local, machine-specific
+  — not part of this repo, not synced by `sync_rules.py`). This is where
+  direct, durable corrections to Lane 3's own behavior go, separate from the
+  shared protocol/rule files above that steer all three lanes. Devin AA also
+  writes to this file itself (not purely human-maintained) — check it, don't
+  assume the `ai-platform` rules are the only lever when Lane 3's behavior
+  needs adjusting.
 - Runs locally. Reads the GitHub issue independently — **never reads Lane
   2's code before writing its test spec.** This now explicitly includes
   **Lane 2's own implementation-report comment on the issue thread** — Lane
