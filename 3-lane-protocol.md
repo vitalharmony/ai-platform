@@ -48,6 +48,22 @@ Condensed operational directives. For philosophy/rationale, see
   Do not wait for or require the handoff to be pasted in chat.
 - Executes exactly what the handoff specifies — no scope creep.
 - Stays within the file targets the handoff defines.
+- **3 fix attempts max on a single root cause; 4th failure stops and
+  reports back instead of continuing to iterate.** This cap already
+  existed for Lane 3 (see Escalation, below) but was never written for
+  Lane 2 — a real gap: Lane 2 is the lane that does most of the iterative
+  "try something, test it, try again" work on a genuinely hard bug, and
+  had no explicit trigger to stop and ask for help instead of continuing
+  to churn. Real incident: #152's focus-trap fix (a live-DOM behavioral
+  bug, hard to iterate on blind without a visual feedback loop) took
+  substantially more churn than it should have before Lane 2 landed a
+  working fix. It got there, but an adversarial check-in after a few
+  failed attempts — comparing notes with Lane 1 or escalating to the Tech
+  Lead — would likely have converged faster than continuing to iterate
+  solo. When reporting completion after multiple attempts, **include what
+  was tried and ruled out**, not just the final working diff — that
+  history is exactly what Lane 1's review should look at when deciding if
+  the fix is sound or got there by luck.
 - **Never executes the write/apply path of a data-modifying script —
   categorically, no exception, regardless of what the handoff says.**
   Lane 2 may write a migration/fix script and verify it via dry-run or
