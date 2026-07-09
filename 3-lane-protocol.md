@@ -156,6 +156,16 @@ unnumbered trigger is ambiguous. Some triggers go to Lane 1; others go
 directly to Lane 2 or Lane 3 in their own respective interfaces, and Lane 1
 never sees them or acts on them.
 
+**Before acting on any trigger, the receiving lane checks the issue's
+state.** If `#N` is already closed, stop and ask HITL to confirm the
+number before doing anything — don't proceed on the assumption a closed
+issue was meant. A typo'd issue number (fat-fingering a digit, or naming
+one that was just closed a few messages ago) is an easy, low-cost mistake
+to make in a fast-moving session with many issues open at once, and
+proceeding against the wrong issue wastes a full lane cycle and produces
+a confusing record on the wrong thread. This applies to whichever lane
+receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
+
 1. **Lane 1** diagnoses and posts a handoff comment on issue #N (and
    displays it in chat). No trigger needed — this happens unprompted once
    diagnosis is done.
