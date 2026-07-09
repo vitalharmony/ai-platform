@@ -18,6 +18,17 @@ Condensed operational directives. For philosophy/rationale, see
 - Cites exact file(s) and line range(s) affected before writing the handoff.
 - Produces a Lane 1 Handoff Artifact (`templates/lane1-handoff.md`).
 - Includes one concrete test case per requirement in the handoff.
+- **For test cases requiring interactive UI verification, front-loads
+  concrete selectors/interaction paths already known from reading the
+  code** (exact button labels, roles, click sequences) rather than telling
+  Lane 3 to "verify X live" with no starting point. Real cost of not doing
+  this: a handoff that just said "use Playwright for real verification"
+  left Lane 3 to blind-guess selectors through repeated trial and error,
+  costing significant time and command failures on #152 — compare to a
+  handoff that already named exact button text, which went smoothly on
+  #159. This doesn't replace Lane 3's own exploration where genuinely
+  needed, it just removes the exploration Lane 1 could have shortcut by
+  already having read the component.
 - **Posts the handoff as a comment on the GitHub issue itself** — not just
   in chat. The issue is the permanent record: root cause, prompt, and (once
   Lane 2/3 finish) the diff and Lane 3 gate result all live on the same
@@ -85,6 +96,17 @@ Condensed operational directives. For philosophy/rationale, see
 - After approval, executes tests against Lane 2's implementation. See
   `rules/testing-gate.md` (standard) or `rules/frontend-ui-golden-path.md`
   (UI-only variant) for thresholds.
+- **Interactive tool modes are never used for automated execution.** Any
+  browser-automation invocation (Playwright, etc.) runs headless with a
+  non-interactive reporter (e.g. `--reporter=line`) — never `--debug`,
+  `--ui`, `codegen`, or any other mode that opens an inspector/GUI and
+  blocks waiting for human interaction. A collapsed or non-interactive
+  terminal has no way to surface that prompt, so the command just hangs
+  until a human notices and manually cancels it — the same failure shape
+  as the `sudo`/`npx install` hangs already seen this session, just in a
+  different tool. If a command needs interactive confirmation, that's a
+  signal to stop and ask, not to keep invoking variants of the same
+  command hoping one works headlessly.
 - **Lane 3 is the only lane authorized to execute a data-modifying
   script's write/apply path.** When an issue's scope is itself a data
   migration or correction (not just testing already-written application
@@ -192,7 +214,14 @@ silently narrowing scope, when:
 - The handoff itself is unclear or contradicts `.windsurfrules` (Lane 2).
 - The same root cause survives 3 fix attempts (Lane 3), or a check cannot be
   live-verified in the current environment (Lane 3 — report the gap, don't
-  fake the check).
+  fake the check). **This covers repeated tool/command failures during test
+  authoring, not just failed fix-attempts on a specific assertion** — if a
+  command fails, hangs, or requires manual intervention 3 times in a row for
+  the same underlying reason, that's the same signal as 3 failed fix
+  attempts and escalates the same way. Real incident: Lane 3 hit repeated
+  bad Playwright command failures while exploring how to interact with the
+  app for #152, requiring Marc to manually cancel the terminal multiple
+  times, well past the point escalation should have fired.
 
 ## Team Topology
 
