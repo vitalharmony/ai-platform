@@ -280,7 +280,14 @@ receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
 6. **HITL says "Close #N"** (→ Lane 1). Lane 1 posts a closing summary
    comment (referencing the gate evidence) and closes the issue. This is
    the only trigger that results in a close, and it is never self-initiated
-   by Lane 1 regardless of how clean a prior gate looked.
+   — **by any lane**, not just Lane 1, regardless of how clean a prior gate
+   or implementation looked. This was originally written naming only Lane 1
+   (after HRSE2's `#149` incident); that narrower wording let a real Lane 2
+   violation slip through on HRSE2 `#186` — Lane 2 implemented a fix and
+   closed the issue itself, with no Lane 3 gate having run at all. The rule
+   is: closing requires the human operator's explicit "Close #N," every
+   time, from every lane, with no exception for confidence or a clean local
+   test pass.
 
 ## Escalation
 
