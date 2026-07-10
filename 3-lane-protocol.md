@@ -194,6 +194,26 @@ Condensed operational directives. For philosophy/rationale, see
   violations, never fixes them itself, even trivial ones.
 - Every pass/fail claim must be backed by live execution (request/response,
   log line, before/after count) — a source-code citation is not evidence.
+- **Fast-fail on external blockers.** If a live check is blocked by a
+  genuine external dependency — a bug in another open issue this ticket's
+  verification requires, a missing precondition, an environment gap that
+  isn't this ticket's to fix — Lane 3 confirms the blocker is real with the
+  minimum evidence needed (one clean repro, not exploratory workarounds),
+  then stops and reports it as a gate finding **immediately**. It does not
+  attempt workarounds, mocks, or alternate verification paths to route
+  around it first. Real incident: on HRSE2 #204, Lane 3's live delete-flow
+  test depended on a mutation endpoint broken by a concurrent bug in #187;
+  rather than reporting this immediately, Lane 3 tried several workarounds
+  (including a mocked-browser test) before finally surfacing the blocker —
+  burning real cost chasing a blocker that had *already been fixed* by the
+  time the report was filed. Marc: "L3 burned 3% of my credits trying all
+  kinds of crazy work-arounds instead of admitting it was blocked. This is
+  not acceptable. It needs to follow the fast-fail principle which is
+  doctrine in software development." This is distinct from the auto-fix
+  rule above (which governs Lane 3's own test-spec issues, not external
+  blockers) — an external blocker in another lane's work is never something
+  to route around, mock past, or retry; it is always an immediate
+  stop-and-report.
 
 ## HITL Gate Language
 

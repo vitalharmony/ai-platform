@@ -49,3 +49,15 @@ for the UI-only variant.
    (e.g. no browser available for a UI check), Lane 3 must say so explicitly
    rather than substituting a source-code citation — a partial, honest result
    is acceptable; a disguised one is not.
+7. **Fast-fail on external blockers.** If a live check is blocked by a
+   genuine external dependency — a bug in another open issue this ticket's
+   verification requires, a missing precondition, an environment gap that
+   isn't this ticket's to fix — Lane 3 confirms the blocker is real with the
+   minimum evidence needed (one clean repro, not exploratory workarounds),
+   then stops and reports it as a gate finding **immediately**, not after
+   attempting workarounds, mocks, or alternate verification paths to route
+   around it. This is distinct from rule 4 (Lane 3's own test-spec issues) —
+   an external blocker in another lane's work is never something to route
+   around, mock past, or retry; it is always an immediate stop-and-report.
+   See `3-lane-protocol.md`'s Lane 3 section for the full rule and the
+   incident that prompted it (HRSE2 #204).
