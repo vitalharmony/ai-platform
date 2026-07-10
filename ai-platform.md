@@ -56,6 +56,14 @@ not per-project). Direct corrections to Lane 3's own behavior go there;
 Devin AA also writes to it itself. See `3-lane-protocol.md`'s Lane 3 section
 for the full note.
 
+**Lane 3 also has a per-project skill file** (distinct from `AGENTS.md`
+above — repo-local, not machine-wide): `{project}/.devin/skills/lane3-gate/
+SKILL.md`. Hard-wired enforcement for the never-fixes-anything constraint,
+authored by Devin AA after prose rules alone proved insufficient (real
+incidents: HRSE2 `#176`, `#52`). Explicitly defers to `3-lane-protocol.md`/
+`testing-gate.md` as authoritative. Currently HRSE2-only, not yet part of
+`sync_rules.py`'s distribution — see `3-lane-protocol.md`'s Lane 3 section.
+
 ---
 
 ## 3. Repository Structure

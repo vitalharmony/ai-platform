@@ -98,6 +98,20 @@ Condensed operational directives. For philosophy/rationale, see
   writes to this file itself (not purely human-maintained) — check it, don't
   assume the `ai-platform` rules are the only lever when Lane 3's behavior
   needs adjusting.
+- **Own skill file, per-project: `{project}/.devin/skills/lane3-gate/SKILL.md`**
+  (repo-local, not `~/.config` like `AGENTS.md` above, and — as of 2026-07-10
+  — not yet synced across projects by `sync_rules.py`; currently HRSE2-only).
+  This is a hard-wired enforcement mechanism for the never-fixes-anything
+  constraint two sections below, drafted by Devin AA itself after diagnosing
+  that prose rules alone weren't preventing it from rationalizing past them
+  ("I found the fix and it was easy" / "the fix is obviously correct"). The
+  skill explicitly names `ai-platform/3-lane-protocol.md` and
+  `rules/testing-gate.md` as authoritative — it is the enforcement layer, not
+  a second source of truth, and should be updated to match if the two ever
+  drift. Cites the real incidents (`#176`, `#52`) that produced it. If this
+  pattern proves out, worth revisiting whether it should be added to
+  `sync_rules.py`'s distribution so other projects get the same hard-wired
+  protection, not just prose.
 - Runs locally. Reads the GitHub issue independently — **never reads Lane
   2's code before writing its test spec.** This now explicitly includes
   **Lane 2's own implementation-report comment on the issue thread** — Lane
