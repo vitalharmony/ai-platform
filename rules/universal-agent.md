@@ -186,6 +186,36 @@ touch again after crossing a threshold — a lower-value case better solved
 by future codebase-wide pattern detection (see the `ai-platform` Epic #11
 knowledge-graph work) than a manual periodic sweep.
 
+## MEMORY-ENTRY STANDARD (ALL AGENTS, ALL MEMORY SURFACES)
+
+A durable memory entry — a rule addition to any `ai-platform` doc, an agent
+memory file, or a Lane 3 `AGENTS.md` self-correction — earns its place by
+completing the five-rung ladder, not stopping partway:
+
+1. **Fail** — something went wrong; write down what happened.
+2. **Investigate** — figure out why, don't assume.
+3. **Verify** — turn the diagnosis into a checked fact (re-tested, re-read,
+   independently confirmed — not just "seems right").
+4. **Distill** — turn the verified fact into a general rule, not just a
+   record of the one-off incident.
+5. **Consult** — write it so a future session reads the rule instead of
+   re-deriving it from scratch.
+
+Practical entry discipline: a memory entry states **FAILED / WHY / VERIFIED
+/ RULE**. If a step wasn't done — the cause wasn't actually investigated, or
+the fix wasn't verified live — say so, or don't store the entry as settled
+fact. A guess marked as a guess is fine; a guess stored as a verified rule is
+the failure mode this standard exists to prevent.
+
+This applies explicitly to **Lane 3's `~/.config/devin/AGENTS.md`**
+self-writes — that file is agent-maintained with no prior entry-quality bar,
+which is exactly the "pile of failure notes" risk the ladder names.
+
+Does **not** apply to a project's `transaction-log.md` (or equivalent delta
+log) — that is rung-1-by-design, a record of what changed, not a memory. The
+ladder applies to whatever gets promoted *out of* a delta log into a real
+rule, not to the log itself.
+
 ## SURGICAL CHANGES (KARPATHY PRINCIPLE)
 
 Make the minimum change that accomplishes the stated task. Do not refactor,
