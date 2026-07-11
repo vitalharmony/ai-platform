@@ -74,8 +74,8 @@ here is different — cross-issue pattern analysis across the 3-lane loop,
 and a diligence/investor trail showing why each change was made. Same
 underlying handoff discipline (root cause, explicit spec, test cases), a
 different retention decision because the platform optimizes for the
-auditable record over single-session disposability. See `templates/
-lane1-handoff.md`.
+auditable record over single-session disposability. See
+`templates/lane1-handoff.md`.
 
 ---
 

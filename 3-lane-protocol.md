@@ -288,7 +288,9 @@ receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
    approval, Lane 3 executes and posts its gate report as a comment on #N.
 5. **HITL says "Lane 3 done for #N"** (→ Lane 1). Lane 1 reads #N's Lane 3
    gate comment, confirms every claim is backed by live execution (not
-   source-code reasoning), checks for protocol adherence (Lane 3 avoided
+   source-code reasoning) **by inspecting each check's attached evidence
+   artifact, not by trusting the prose claim** (see `rules/testing-gate.md`
+   rule 3), checks for protocol adherence (Lane 3 avoided
    Lane 2's comment before writing its spec, and did not implement any fix
    itself during its style/refactor pass — see `rules/testing-gate.md`),
    and independently spot-verifies at least one claim live if anything is
