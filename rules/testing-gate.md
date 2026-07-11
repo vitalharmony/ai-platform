@@ -24,6 +24,21 @@ for the UI-only variant.
    the code and reasoned it should pass) does not satisfy this gate. Every
    check needs an actual run: a request/response, a log line, a before/after
    count.
+   - **Each check's gate report carries the evidence artifact itself, not
+     just a prose claim that live execution happened** — the pasted
+     command+output for an API/DB check, the log excerpt with timestamp, a
+     screenshot/short recording for a UI check, the actual query output for
+     a before/after count. A claim without its artifact does not satisfy
+     this rule any more than a source-code citation does.
+   - Artifacts too large to paste into the issue comment go to
+     `~/Harmonic_Projects/testplan/{issue}/`, with the gate comment linking
+     the filenames — the same directory Lane 3 already uses for test
+     plans/results, now also the artifact home.
+   - This exists so Lane 1's HITL step-5 review ("confirm every claim is
+     backed by live execution") means inspecting an attached artifact, not
+     trusting prose that live execution happened — the same
+     verify-live-not-source discipline applied one level up, to the gate
+     report itself.
 4. If tests fail, Lane 3 may attempt up to 3 auto-fixes **of its own test
    spec/fixtures** (a bad assertion, a stale fixture, a wrong selector) — 
    **never of the application code under test.** A 4th consecutive failure

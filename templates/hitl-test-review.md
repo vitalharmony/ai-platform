@@ -10,6 +10,10 @@
       golden path — see `rules/testing-gate.md` / `rules/frontend-ui-golden-path.md`)
 - [ ] Test spec was written from the issue alone — confirm Lane 3 did not
       cite Lane 2's implementation as the basis for any test case
+- [ ] For each check in this spec, the evidence artifact that will prove it
+      is pre-declared (command+output, log excerpt, screenshot/recording,
+      before/after query output) — approving this spec is approving what
+      counts as proof, not just what gets tested
 - [ ] **Does this spec include executing a data-modifying script's
       write/apply path against real data?** If yes, say so explicitly
       here and confirm the HITL understands approval of this spec *is*

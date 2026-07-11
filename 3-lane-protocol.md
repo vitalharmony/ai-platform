@@ -194,6 +194,10 @@ Condensed operational directives. For philosophy/rationale, see
   violations, never fixes them itself, even trivial ones.
 - Every pass/fail claim must be backed by live execution (request/response,
   log line, before/after count) — a source-code citation is not evidence.
+  **The gate report carries that evidence as an artifact, inline or by
+  reference** (`~/Harmonic_Projects/testplan/{issue}/` for anything too
+  large to paste), not just prose asserting it happened — see
+  `rules/testing-gate.md` rule 3 for the full requirement.
 - **Fast-fail on external blockers.** If a live check is blocked by a
   genuine external dependency — a bug in another open issue this ticket's
   verification requires, a missing precondition, an environment gap that
