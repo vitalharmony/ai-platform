@@ -209,3 +209,35 @@ project-specific addenda.
       (repo location and stack are still TBD in the registry above)
 - [ ] Confirm Ajit's involvement/framework before touching issue #8 — parked,
       not blocking v1.0
+
+---
+
+## 9. References — External Validation
+
+The lane separation in §2 — the maker is never the grader — was arrived at
+independently, from real incidents on this platform (HRSE2 `#149`, `#176`,
+`#186`), before any external corroboration existed. It now has one: Anthropic
+has published quantified findings that match the platform's core structural
+principle.
+
+**Lance Martin (Anthropic), "Designing loops with Fable 5" (June 2026):**
+in a continual-learning benchmark, an independent verifier — running in its
+own context window, seeing only the artifact and the rubric, not the maker's
+reasoning trail — verified up to **73% of answers** (Fable 5, best runs),
+versus **7–33%** (median ~17%, Opus 4.7) when a model critiqued its own work
+in its own context. Anthropic's own framing, quoted in the same material:
+*"Tuning a standalone evaluator to be skeptical is far more tractable than
+making a generator critical of its own work."* Agents grading their own work
+tend to confidently praise it even when the quality is mediocre.
+
+Anthropic's companion engineering post, **"Loop engineering: Getting started
+with loops"** (claude.com/blog/getting-started-with-loops), independently
+recommends the same shape: a second agent, in fresh context, for code review.
+
+**What this changes:** nothing operative. This section is documentation
+lineage only — `3-lane-protocol.md` remains the no-narrative, agent-loaded
+source of truth, and the internal incidents that produced each rule remain
+the primary record. This section exists because a future diligence reader
+(or a new team member) benefits from knowing the architecture wasn't just
+internally reasoned — it matches published, quantified, external guidance
+that arrived after the platform's own design was already in production.
