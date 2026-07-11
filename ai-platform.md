@@ -97,6 +97,9 @@ ai-platform/
 ├── templates/
 │   ├── lane1-handoff.md            # Lane 1 → 2 structured handoff template
 │   └── hitl-test-review.md         # Tech Lead HITL approval checklist
+├── docs/
+│   ├── decisions/                  # platform ADRs (ADR-NNN-*.md, sequential)
+│   └── onboarding-*.md             # per-developer onboarding addenda
 └── sync_rules.py                   # bootstrapper — clone + symlink setup
 ```
 
