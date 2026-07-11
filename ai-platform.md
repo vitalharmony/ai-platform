@@ -3,7 +3,7 @@
 **Owner:** Marc Mangus / Vital Harmony LLC
 **Status:** Draft v0.2 — core protocol content finalized; tooling (`sync_rules.py`) and per-project rollout in progress
 **Applies to:** All Vital Harmony projects (CymaGraph/HRSE2, Ke'nekted, LeasePAL, OWE Studio)
-**Platform repo:** https://github.com/vitalharmony/ai-platform (private)
+**Platform repo:** https://github.com/vitalharmony/ai-platform (public)
 
 ---
 
@@ -81,7 +81,7 @@ auditable record over single-session disposability. See
 
 ## 3. Repository Structure
 
-### Platform Repo (`vitalharmony/ai-platform`, private)
+### Platform Repo (`vitalharmony/ai-platform`, public)
 
 ```
 ai-platform/
