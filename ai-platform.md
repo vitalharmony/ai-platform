@@ -64,6 +64,19 @@ incidents: HRSE2 `#176`, `#52`). Explicitly defers to `3-lane-protocol.md`/
 `testing-gate.md` as authoritative. Currently HRSE2-only, not yet part of
 `sync_rules.py`'s distribution — see `3-lane-protocol.md`'s Lane 3 section.
 
+**Handoffs are permanent, by deliberate choice.** The prevailing public
+pattern for inter-agent handoffs (e.g. Matt Pocock's widely-adopted
+`/handoff` skill) treats them as disposable — written to a temp directory,
+never committed, optimized for one developer's single-session ergonomics.
+This platform inverts that on purpose: a Lane 1 handoff is posted as a
+permanent comment on the GitHub issue it belongs to, because the audience
+here is different — cross-issue pattern analysis across the 3-lane loop,
+and a diligence/investor trail showing why each change was made. Same
+underlying handoff discipline (root cause, explicit spec, test cases), a
+different retention decision because the platform optimizes for the
+auditable record over single-session disposability. See `templates/
+lane1-handoff.md`.
+
 ---
 
 ## 3. Repository Structure

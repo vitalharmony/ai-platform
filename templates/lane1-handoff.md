@@ -5,7 +5,17 @@
 ### Issue
 - GitHub: {url}
 - Labels: {labels}
-- Acceptance criteria: {copied verbatim from issue}
+- Acceptance criteria: reference the issue body by default — Lane 2 fetches
+  it directly (`gh issue view`). Quote a specific line verbatim only when
+  this handoff's spec depends on exact wording (e.g. disambiguating a
+  criterion that reads differently than Lane 1's diagnosis) — otherwise a
+  copy silently drifts if the issue is edited after handoff.
+
+### Lane 3 Gate Variant
+{standard (`rules/testing-gate.md`) | UI golden path
+(`rules/frontend-ui-golden-path.md`) | project-specific skill, e.g. HRSE2's
+`.devin/skills/lane3-gate/SKILL.md`} — name it explicitly so Lane 3 doesn't
+have to infer which gate applies.
 
 ### Affected Files
 | File | Lines | Change type |
@@ -18,6 +28,10 @@
 
 ### Implementation Spec
 {explicit step-by-step instruction for Lane 2 — no ambiguity}
+
+**No secrets in this handoff.** Name the env var a step depends on, never
+its value — this handoff is posted as a permanent comment on the GitHub
+issue, a wider audience than a local file.
 
 ### Test Cases (for Lane 3)
 1. After fixing, [action] must produce [Y] and must NOT produce [Z].
