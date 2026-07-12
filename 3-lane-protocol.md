@@ -332,6 +332,34 @@ silently narrowing scope, when:
   app for #152, requiring Marc to manually cancel the terminal multiple
   times, well past the point escalation should have fired.
 
+### Cross-lane thrashing — the "sticky wicket" circuit breaker
+
+The rules above cap retries *within* one lane's single attempt. A different
+failure mode is cross-lane: the same **issue** cycles Lane 2 completion
+claim → Lane 3 gate FAIL (or Lane 1 declining a completion claim) round
+after round, each round fixing a real, correctly-diagnosed problem, without
+the issue converging. Individually each round looks like the protocol
+working correctly (Lane 3 catching real bugs, Lane 1 catching real gaps) —
+the failure is only visible zoomed out, across rounds.
+
+**Trigger (countable, not a vibe check): 3 consecutive FAIL/declined-
+completion verdicts on the same issue.** At that point Lane 1 invokes the
+`sticky-wicket` subagent (`agents/sticky-wicket.md`) — fresh context, no
+anchoring on the round-by-round history the calling session has
+accumulated — to read the full issue thread and diagnose whether the
+underlying *approach* is structurally wrong, not just the latest bug. This
+is the cross-lane analog of a software circuit breaker: after N failures,
+stop retrying the same thing and ask whether the thing itself is broken.
+
+Real incident this rule generalizes from: HRSE2 #233 (parity-test-suite
+authoring) cycled 5 rounds of FAIL before the pattern was named — each
+round's finding was real and correctly caught, but the reviewing session
+kept re-diagnosing symptoms (a stray git branch, a lost stash, an
+unresolved skip) without stepping back to ask whether the disposable-branch
+test architecture itself was the source of the recurring class of bug.
+
+See `agents/sticky-wicket.md` for the subagent's full operating rules.
+
 ## Team Topology
 
 | Role | Person | Responsibility |
