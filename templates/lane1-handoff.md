@@ -51,7 +51,20 @@ decision is inconvenient to make now — an undeclared delegation is exactly
 the gap that produced HRSE2 #233's recurring bug class.
 
 ### Implementation Spec
-{explicit step-by-step instruction for Lane 2 — no ambiguity}
+**If this handoff triggers Plan-First Implementation** (`3-lane-protocol.md`
+§ Plan-First Implementation — Delegated Judgment Calls above is non-"none",
+the work mutates git/live data, or HITL said "Plan-first #N"): **omit this
+section from the initial post.** Post everything above as the handoff,
+stop there, and wait for HITL to relay "Plan #N" (not "Implement #N" — see
+`3-lane-protocol.md` § HITL Gate Language step 2a). Once Lane 2's plan
+draws a PROCEED/PROCEED WITH NAMED CHANGES verdict, post this section as a
+**follow-up comment** on the same issue, incorporating any named changes,
+and only then does HITL send "Implement #N". This is a hard split, not a
+formality — per ADR-005 (HRSE2 #236), co-delivering the spec with a "plan
+first" instruction in the same comment is what let the gate be skipped
+even when explicitly, repeatedly stated. Otherwise (the common case, no
+Plan-First trigger): {explicit step-by-step instruction for Lane 2 — no
+ambiguity}
 
 **No secrets in this handoff.** Name the env var a step depends on, never
 its value — this handoff is posted as a permanent comment on the GitHub

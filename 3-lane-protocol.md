@@ -245,7 +245,22 @@ receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
    diagnosis is done.
 2. **HITL says "Implement #N"** (→ Lane 2). Lane 2 fetches the issue and
    Lane 1's handoff comment from GitHub itself and implements it, posting
-   its own completion report as a comment on #N.
+   its own completion report as a comment on #N. **For a plan-first issue
+   (see § Plan-First Implementation), this trigger is never sent first —
+   HITL sends "Plan #N" instead** (step 2a below); "Implement #N" for that
+   issue only follows a PROCEED/PROCEED WITH NAMED CHANGES verdict. Real
+   incident this fixes: on HRSE2 #236, the handoff's own bolded stop
+   instruction was overridden in practice because "Implement #N" — the
+   literal, most recent go-signal — contradicts a "but plan first" caveat
+   living in the same comment. Two distinct trigger words remove the
+   contradiction instead of relying on Lane 2 resolving it correctly every
+   time (see ADR-005).
+   - **2a. HITL says "Plan #N"** (→ Lane 2, plan-first issues only). Lane 2
+     fetches the issue and Lane 1's handoff — which for a plan-first issue
+     contains no Implementation Spec section yet (see § Plan-First
+     Implementation) — and posts its implementation plan as a comment,
+     then stops. There is nothing to implement from yet, so nothing to
+     skip ahead into.
 3. **HITL says "Lane 2 done for #N"** (→ Lane 1). Lane 1 checks the **full
    working-tree diff** (`git status` / `git diff` across the whole repo,
    not just the files the handoff predicted) against the handoff's
@@ -497,6 +512,21 @@ context instead of a Lane 1 solo read. Full evaluation, including the
 honest cost/benefit case against building this at all:
 `docs/decisions/ADR-004-plan-first-implementation-and-comment-formatting.md`.
 
+**Second real incident, ADR-005:** on HRSE2 #236, a handoff carried an
+explicit, bolded operator-override instruction to plan-first — restated
+three times in the same comment — and Lane 2 still implemented straight to
+`main` before any plan was posted. `sticky-wicket`'s live diagnosis: this
+was not a wording failure (the instruction was already maximally explicit)
+but a co-delivery failure — the same comment that said "stop before
+writing code" also contained a complete, numbered Implementation Spec,
+i.e. everything needed to skip the gate was handed over *with* the gate.
+Two structural fixes below (handoff-splitting, distinct relay triggers)
+close that gap; see the ADR for the full incident record and the
+rejected alternatives (a stronger single-comment wording, a git-hook-only
+fix considered but not sufficient alone since it stops the *commit*, not
+the premature write-then-discard cycle a hook can't distinguish from
+legitimate iteration).
+
 **Trigger — self-declared by the handoff, not a size judgment.**
 `templates/lane1-handoff.md` carries a mandatory field, *Delegated
 Judgment Calls* (design decisions Lane 1 explicitly leaves to Lane 2;
@@ -508,29 +538,41 @@ Plan-first is required when any of:
    under the Tooling Exception.
 3. HITL explicitly says "Plan-first #N."
 
+**Handoff-splitting — the gate is now physical, not voluntary.** For a
+plan-first issue, Lane 1's handoff comment **omits the Implementation Spec
+section entirely** — design content, affected-files table, root cause,
+design alternatives, load-bearing assumptions, delegated judgment calls,
+and test cases are all still posted, but the numbered step-by-step
+instructions are withheld. There is nothing for Lane 2 to implement from
+until the plan review passes, so "implement anyway" is no longer a
+self-restraint failure — the spec simply isn't there yet.
+
 **Process — one extra relay, never a full round-trip:**
-- On "Implement #N" for a plan-first issue, Lane 2 posts its
-  implementation plan as a comment on #N — covering, at minimum, its
-  resolution of each delegated judgment call and the failure/cleanup paths
-  of any git- or data-mutating mechanics — and **stops before writing any
-  code.** The plan is a natural prefix of work Lane 2 was doing anyway (it
-  has already fetched the issue and read the cited files); the marginal
-  Devin cost is one comment.
+- On "Plan #N" (see § HITL Gate Language step 2a) for a plan-first issue,
+  Lane 2 posts its implementation plan as a comment on #N — covering, at
+  minimum, its resolution of each delegated judgment call and the
+  failure/cleanup paths of any git- or data-mutating mechanics — and
+  **stops.** The plan is a natural prefix of work Lane 2 was doing anyway
+  (it has already fetched the issue and read the cited files); the
+  marginal Devin cost is one comment.
 - HITL relays "Plan up for #N" (→ Lane 1). Lane 1 invokes `pitch-inspection`
   in **plan-review mode** (see `agents/pitch-inspection.md`), passing the
   original handoff plus Lane 2's plan; the review covers only the delta
   Lane 2 introduced, not a re-review of the whole handoff. Lane 1 posts the
   verdict as a single comment on #N. This is a Claude-side subagent call —
   no Devin credits, no gate cycle.
-- **PROCEED / PROCEED WITH NAMED CHANGES:** Lane 2 fetches the verdict
-  comment and implements, incorporating named changes directly — no
-  re-submission, no second review pass. **REFORGE:** the named flaw goes
-  back to Lane 2 for one revised plan; if the second plan still draws
-  REFORGE, that is an escalation to HITL, never a third review round. Same
-  no-thrash cap as the Pre-Flight Second Read.
+- **PROCEED / PROCEED WITH NAMED CHANGES:** Lane 1 posts the withheld
+  Implementation Spec as a follow-up comment (incorporating any named
+  changes), then HITL sends **"Implement #N"** — now unambiguous, since it
+  is only ever sent after a verdict exists. Lane 2 implements from the
+  newly-posted spec — no re-submission, no second review pass. **REFORGE:**
+  the named flaw goes back to Lane 2 for one revised plan; if the second
+  plan still draws REFORGE, that is an escalation to HITL, never a third
+  review round. Same no-thrash cap as the Pre-Flight Second Read.
 - A plan-first issue where Lane 2 starts implementing without a
   posted-and-reviewed plan is a protocol violation, same class as skipping
-  the HITL close gate.
+  the HITL close gate — file it per § STANDING-RULE VIOLATIONS GET FILED
+  in `rules/universal-agent.md`, do not just note it in a gate comment.
 
 **What this does not cover:** faithfulness of Lane 2's later completion
 reports to the approved plan (verification-honesty, governed by
