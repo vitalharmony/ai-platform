@@ -19,6 +19,10 @@ be assigned directly to Claude Code as architect/coder/PM. This is an
 explicit, per-engagement exception — it does not default open. When in
 doubt, ask before writing to a project's application source tree.
 
+Project-level dev/test tooling has its own narrower exception — see
+`3-lane-protocol.md` § Tooling Exception. Keep the two in sync; they should
+never drift apart on scope or on the never-grade-your-own-work rule.
+
 ## Role Boundary — Lane 1 Never Closes the Gate It's Being Checked By
 
 Symmetric with "Lane 1 Never Implements": Claude Code reviews and

@@ -315,6 +315,71 @@ receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
    time, from every lane, with no exception for confidence or a clean local
    test pass.
 
+## Tooling Exception — Dev/Test Tooling Skips the Full Loop
+
+The full Lane 1 → Lane 2 → Lane 3 cycle exists to protect code that ships.
+Dev/test tooling does not ship, and routing it through the full loop
+multiplies every one-line bug into a full gate cycle. Real incident: HRSE2
+#233 (parity-test-suite authoring) burned roughly 10 rounds and a full
+day's credit budget, with the per-round cost dominated by loop overhead
+(a full independent Lane 3 suite re-run per trivial fix), not by the bugs
+themselves. Full incident and decision record:
+`docs/decisions/ADR-002-tooling-vs-application-3-lane-exception.md`.
+
+**Scope — ALL of the following must hold, or the full loop applies:**
+1. The work product is a development/test/verification harness, migration
+   script, or repo-local automation — it is never imported by, served by,
+   or deployed with application code, and no production or user-facing
+   path can execute it.
+2. Its blast radius is limited to the dev machine and repo working state,
+   and any mutation it performs there is contained by its own design
+   (disposable branches, snapshot/restore, scratch dirs outside the
+   tracked tree).
+3. The operator has explicitly scoped the specific issue as tooling work
+   (label `infrastructure` or `tech-debt` plus an explicit note in the
+   issue body). This exception never defaults open; when in doubt, it is
+   application code. Anything that touches application source, schemas,
+   CI that gates merges, secrets handling, or data in the graph is NOT
+   tooling work regardless of where the file lives.
+
+This is the project-level analog of the platform-tooling exception in
+`rules/universal-claude.md` ("platform-level tooling and documentation
+work explicitly scoped as such by the operator... may be assigned directly
+to Claude Code"), and carries the same posture: explicit, per-issue, never
+assumed.
+
+**Process under the exception:**
+- **Single implementer.** One agent (whichever lane the operator assigns,
+  including Lane 1/Claude Code as an explicit exception to "Lane 1 never
+  implements") designs and writes the tooling in one pass. No Lane 1
+  handoff document, no Lane 2 relay, no per-round Lane 3 gates.
+- **One human-reviewed pass, before commit.** The operator (or a
+  designated reviewer who is not the implementer) reviews for exactly
+  three things: (1) scope — it is genuinely tooling per the boundary
+  above; (2) containment — the mutations it performs on the dev
+  machine/repo are bounded and reversible; (3) honesty — its checks
+  verify live behavior, not prose claims (`rules/testing-gate.md` still
+  applies to what the tooling *asserts*, even though the tooling itself
+  skips the gate).
+- **Even under this exception, the implementer never grades its own
+  verification.** If the implementer is Lane 1, a fix Lane 1 just wrote is
+  not verified by Lane 1 running it and declaring success — that is the
+  same maker-grades-own-work failure the whole 3-lane structure exists to
+  prevent, just relocated inside a single lane. Get a second read (a
+  fresh-context subagent, or the human reviewer above) before trusting the
+  result, especially under time or cost pressure — that is exactly when
+  the shortcut is most tempting and least reliable. Real incident, same
+  night as #233: Lane 1 wrote a one-line fix, ran it through the suite
+  itself without independent review, and had gotten the fix backwards —
+  caught only because `sticky-wicket` was invoked afterward. See ADR-002.
+- **Lane 3 still gates the moment the tooling's output matters.** The
+  tooling's *first consequential use* — the run whose result approves or
+  blocks shipping work — is a Lane 3 gate with the standard evidence
+  rules. Lane 3 does not re-gate the tooling itself once it has passed its
+  one human-reviewed pass; a defect discovered at that later gate is a
+  finding against the tooling, handled under this same exception (fix it,
+  one more human-reviewed pass, no return to the full loop).
+
 ## Escalation
 
 Any lane escalates to the Tech Lead (human) rather than guessing, looping, or
@@ -342,7 +407,7 @@ the issue converging. Individually each round looks like the protocol
 working correctly (Lane 3 catching real bugs, Lane 1 catching real gaps) —
 the failure is only visible zoomed out, across rounds.
 
-**Trigger (countable, not a vibe check): 3 consecutive FAIL/declined-
+**Trigger (countable, not a vibe check): 2 consecutive FAIL/declined-
 completion verdicts on the same issue.** At that point Lane 1 invokes the
 `sticky-wicket` subagent (`agents/sticky-wicket.md`) — fresh context, no
 anchoring on the round-by-round history the calling session has
@@ -351,12 +416,29 @@ underlying *approach* is structurally wrong, not just the latest bug. This
 is the cross-lane analog of a software circuit breaker: after N failures,
 stop retrying the same thing and ask whether the thing itself is broken.
 
+The threshold was lowered from 3 to 2 after HRSE2 #233: by round 3 the
+thrashing pattern was already fully visible in hindsight, and every
+additional round before the circuit breaker fired cost a full gate cycle.
+Two consecutive failed/declined rounds on the same issue is a cheap check
+that is either quickly confirmed as "normal iteration — continue" or
+catches a structural problem two rounds earlier. (This is a separate
+counter from the within-lane retry caps above — a single flaky command
+failing twice on an otherwise-converging issue should not trip this; it's
+specifically for the same issue producing two full FAIL/declined-completion
+verdicts in a row.)
+
 Real incident this rule generalizes from: HRSE2 #233 (parity-test-suite
-authoring) cycled 5 rounds of FAIL before the pattern was named — each
-round's finding was real and correctly caught, but the reviewing session
-kept re-diagnosing symptoms (a stray git branch, a lost stash, an
-unresolved skip) without stepping back to ask whether the disposable-branch
-test architecture itself was the source of the recurring class of bug.
+authoring) cycled roughly 10 rounds of FAIL/declined-completion before the
+pattern was named — most rounds' findings were real and correctly caught,
+but the reviewing session kept re-diagnosing symptoms (a stray git branch,
+a lost stash, an unresolved skip) without stepping back to ask whether the
+disposable-branch test architecture itself was the source of the recurring
+class of bug. The eventual `sticky-wicket` pass also caught a second-order
+instance of the same failure: Lane 1's own self-verification of a fix it
+had just written (skipping the subagent and grading its own work) turned
+out to be wrong, reverting a correct earlier fix — see
+`docs/decisions/ADR-002-tooling-vs-application-3-lane-exception.md` for the
+full incident and the process change it produced.
 
 See `agents/sticky-wicket.md` for the subagent's full operating rules.
 
