@@ -21,14 +21,25 @@ Marc's). The exact command is in that section.**
 These are real deviations from the generic platform description — don't be
 surprised by them:
 
-1. **Service lifecycle is `hrse_manager.py`, full stop.** Never run
-   `uvicorn`, `npm run dev`, or `git commit`/`push` manually on this repo,
-   even to save time. If the manager script itself is broken, the fix is to
-   fix the manager, not route around it.
+1. **Service lifecycle is `hrse_manager.py`, full stop — until epic #224's
+   cutover lands.** Never run `uvicorn`, `npm run dev`, or `git commit`/
+   `push` manually on this repo, even to save time. If the manager script
+   itself is broken, the fix is to fix the manager, not route around it.
    ```bash
    python3 hrse_manager.py --restart --no-browser        # normal restart, bumps + commits
    python3 hrse_manager.py --restart --no-bump --no-git --no-browser   # tooling/test-only
    ```
+   **In progress (2026-07-13): `hrse_manager.py` is being replaced by
+   mise + process-compose** (`ADR-001-adopt-mise-process-compose-over-custom-manager.md`
+   in this repo). `mise.toml` + `process-compose.yaml` already exist at
+   HRSE2's repo root as a working **alternative** — `mise run pc-up` /
+   `pc-down` / `check` / `bump` / `commit` / `restart` — but **never run it
+   concurrently with `hrse_manager.py`**; both default to the same ports
+   (8002/5173) by design, and `hrse_manager.py`'s `pkill` on restart will
+   kill the other tool's process out from under it. Bring one down before
+   starting the other. `hrse_manager.py` stays the sanctioned tool for
+   normal work until #237 (the final cutover) closes — don't switch your
+   own daily habit yet, just don't be surprised the files exist.
 2. **Neo4j/Cypher rules are HRSE2-local, not platform-universal.**
    `.claude/rules/cypher.md` stays as an HRSE2-specific file — it is not
    symlinked from `ai-platform` because most other Vital Harmony projects
@@ -93,3 +104,51 @@ reasoning (what was measured, what alternatives were rejected, and why) for
 exactly this kind of "convert when touched" rule. If a rule in
 `frontend-hrse2.md` or `backend-hrse2.md` references an ADR by name, read
 that ADR before pushing back on the rule or asking Marc about it.
+
+## New Since 2026-07-09 — Protocol Mechanisms You'll See on Real Issues
+
+Landed the night of 2026-07-12/13, driven directly by a real incident
+(HRSE2 #233 burned ~10 review rounds and a full day's Devin credit budget
+before the pattern was named). Read `docs/decisions/ADR-002` through
+`ADR-004` in this repo for the full incident records — summary of what
+changes your day-to-day work as Lane 2:
+
+1. **Three new Fable subagents exist, invoked by Lane 1, not by you** —
+   `agents/product-strategy.md` (HRSE2-local, architecture/strategy
+   judgment calls), `agents/sticky-wicket.md` (reactive: fires after **2**
+   consecutive FAIL/declined-completion rounds on the same issue — lowered
+   from an original 3 — reads the whole thread fresh and asks whether the
+   *approach* is wrong, not just the latest bug), `agents/pitch-inspection.md`
+   (proactive: reviews Lane 1's handoff *before* it's posted to you, and —
+   new as of ADR-004 — reviews *your* implementation plan too, see below).
+   You'll see their verdicts show up as comments on issues; nothing for
+   you to invoke yourself.
+2. **`templates/lane1-handoff.md` now has three mandatory fields** you'll
+   see on every handoff: *Design Alternatives Considered*, *Load-Bearing
+   Assumptions*, *Delegated Judgment Calls*. Read all three before
+   implementing — "Delegated Judgment Calls" specifically means Lane 1 is
+   deliberately leaving a design decision to you.
+3. **Plan-First Implementation (ADR-004):** if a handoff's Delegated
+   Judgment Calls field is non-"none," or your implementation itself
+   mutates git state or live data, **post your implementation plan as a
+   comment and stop before writing any code.** This isn't extra
+   bureaucracy for its own sake — it's specifically to catch a bad design
+   before Devin credits get spent implementing it. Wait for a Lane 1 (via
+   `pitch-inspection`) verdict comment before proceeding. Real incident
+   this comes from: on #233, you posted a plan, got a solo Lane 1 read
+   that approved a design which then generated ~10 rounds of recurring
+   bugs — this mechanism exists so the review that plan gets is a fresh,
+   independent one, not a repeat of the same mistake.
+4. **Tooling Exception:** dev/test tooling issues (never application code,
+   never shipped, labeled `infrastructure`/`tech-debt`) can skip the full
+   3-lane loop — single implementer, one human-reviewed pass, no per-round
+   Lane 3 gate. Only applies when the issue is explicitly scoped that way;
+   don't assume it for anything touching application source.
+5. **GitHub comment formatting — this one's about you directly.** Your
+   completion comments on #234 and #235 both arrived with mangled/swallowed
+   code blocks (a heredoc + nested-backtick escaping collision), costing
+   real review time re-deriving what you'd actually verified. Going
+   forward: write any comment containing a code block to a file first,
+   post via `gh issue comment --body-file <path>`, then fetch it back
+   (`gh issue view N --json comments`) and confirm it rendered legibly
+   before considering the report done.
