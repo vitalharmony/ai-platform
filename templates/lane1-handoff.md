@@ -26,6 +26,21 @@ have to infer which gate applies.
 ### Root Cause / Entry Point
 > "{quoted line or condition that is the root cause}"
 
+### Design Alternatives Considered
+{none | list each plausible design that was weighed and why it was rejected
+in favor of the chosen one} — "none" means there was one obvious design; a
+non-"none" answer is a `pitch-inspection` trigger (see
+`3-lane-protocol.md` § Pre-Flight Second Read), not a formality to fill in
+after the fact.
+
+### Load-Bearing Assumptions
+{none | list each assumption about existing behavior this spec depends on,
+each marked **verified-live** (checked against the actual running
+code/system, cite how) or **asserted** (believed true, not yet checked)} —
+any assumption left **asserted** is a `pitch-inspection` trigger. An
+assumption that turns out wrong invalidates everything built on it; naming
+it here is what makes it checkable instead of silently inherited.
+
 ### Implementation Spec
 {explicit step-by-step instruction for Lane 2 — no ambiguity}
 

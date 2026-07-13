@@ -442,6 +442,45 @@ full incident and the process change it produced.
 
 See `agents/sticky-wicket.md` for the subagent's full operating rules.
 
+## Pre-Flight Second Read — Catching a Bad Design Before Lane 2 Starts
+
+`sticky-wicket` (above) is reactive: it fires after thrashing has already
+happened. This is its proactive counterpart, for the same underlying
+failure mode observed twice in one night during the #233 incident — the
+maker (Lane 1) grading its own design, not just its own code. See
+`docs/decisions/ADR-003-pitch-inspection-preflight-second-read.md` for the
+evaluation that produced this (including the case against a broader
+version, which was rejected).
+
+**Trigger — self-declared by Lane 1's own handoff, not a separate risk
+assessment.** `templates/lane1-handoff.md` carries two mandatory fields:
+*Design Alternatives Considered* and *Load-Bearing Assumptions*. Lane 1
+invokes the `pitch-inspection` subagent (`agents/pitch-inspection.md`)
+before posting the handoff, whenever any of:
+1. Design Alternatives Considered is anything other than "none."
+2. Load-Bearing Assumptions contains any entry marked "asserted" rather
+   than "verified-live."
+3. The implementation's own operation mutates git state or live data
+   (beyond the deliverable's normal function) **and** the issue is not
+   already routed through the Tooling Exception (which has its own
+   human-reviewed pass covering this).
+
+Most handoffs — a single obvious design, no unverified assumptions, no
+self-mutating automation — post with zero additional review. The two
+template fields cost nothing to fill in as "none"; the second read only
+fires when Lane 1 itself has flagged something contestable.
+
+**One pass, no loop.** `pitch-inspection` returns PROCEED / PROCEED WITH
+NAMED CHANGES / REFORGE BEFORE HANDOFF. Lane 1 revises once if needed and
+posts. If Lane 1 disagrees with the verdict after that one revision, that
+is an escalation to the human operator — never a second pre-flight round.
+Building a new thrash source one stage earlier would defeat the point.
+
+**What this does not cover:** verification-honesty failures (a lane
+reporting completion that doesn't match reality) are not a design problem;
+no pre-flight review touches that class. It is governed separately by the
+verify-live-not-source standard.
+
 ## Team Topology
 
 | Role | Person | Responsibility |
