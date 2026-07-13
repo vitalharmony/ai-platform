@@ -13,12 +13,13 @@ ai-platform/rules/universal-*.md
 
 ## SERVICE LIFECYCLE & GIT (NON-NEGOTIABLE)
 
-- Every project designates exactly one service-lifecycle script (its project
-  `.windsurfrules` names it — e.g. HRSE2's `hrse_manager.py`). All restarts,
-  commits, version bumps, and pushes route through it. No agent manually runs
-  `git add`/`commit`/`push`, or manually starts/stops dev servers, as a
-  substitute.
-- If the lifecycle script fails, diagnose and fix the script — do not bypass
+- Every project designates exactly one service-lifecycle path (its project
+  `.windsurfrules` names it — e.g. HRSE2's `mise run restart`/`check`/`bump`/
+  `commit` tasks, adopted 2026-07-13 per ADR-001, replacing a prior custom
+  script). All restarts, commits, version bumps, and pushes route through it.
+  No agent manually runs `git add`/`commit`/`push`, or manually starts/stops
+  dev servers, as a substitute.
+- If the lifecycle tool fails, diagnose and fix the tool — do not bypass
   it with manual commands.
 - Push to the remote only when the human operator explicitly asks.
 

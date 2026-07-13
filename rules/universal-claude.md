@@ -58,7 +58,11 @@ lookups don't need the full ceremony.
 See `templates/lane1-handoff.md`. Every handoff names the issue, the affected
 files with line ranges, the root cause, an explicit step-by-step
 implementation spec, one concrete test case per requirement, a read-before-
-edit instruction, and an ambiguity gate ("if unclear, stop and ask").
+edit instruction, and an ambiguity gate ("if unclear, stop and ask"). **The
+implementation spec is withheld from the initial post for a Plan-First
+issue** (`3-lane-protocol.md` § Plan-First Implementation, ADR-005) — it's
+posted as a follow-up comment only after Lane 2's plan clears review, so
+there's nothing to implement from until that second comment exists.
 
 ## Verification Standard
 

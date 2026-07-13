@@ -86,7 +86,9 @@ auditable record over single-session disposability. See
 ```
 ai-platform/
 ├── ai-platform.md                  # this document
+├── README.md                       # repo landing page
 ├── 3-lane-protocol.md              # condensed operational protocol (agent-readable)
+├── prompts/                        # Gemini Gem / external-tool prompt templates
 ├── rules/
 │   ├── universal-claude.md         # universal CLAUDE.md directives (all projects)
 │   ├── universal-agent.md          # universal .windsurfrules directives (all projects)
@@ -103,6 +105,7 @@ ai-platform/
 │   └── pitch-inspection.md         # proactive pre-flight handoff second read (Fable)
 ├── docs/
 │   ├── decisions/                  # platform ADRs (ADR-NNN-*.md, sequential)
+│   ├── operator-diffs.md           # HITL-facing "what's different from the norm" notes
 │   └── onboarding-*.md             # per-developer onboarding addenda
 └── sync_rules.py                   # bootstrapper — clone + symlink setup (rules/ only
                                      # today; agents/ distribution tracked in #47, manual
@@ -224,7 +227,7 @@ project-specific addenda.
 
 | Project | Repo | Status | Primary Stack |
 |---|---|---|---|
-| CymaGraph (HRSE2) | vitalharmony/hrse | Active — migration to 3-lane in progress | FastAPI + Neo4j + React 19 |
+| CymaGraph (HRSE2) | vitalharmony/hrse | Active — 3-lane operational | FastAPI + Neo4j + React 19 |
 | Ke'nekted | harmonicarchitect/kenekted-platform (private, `marc@kenekted.ai`) | Active | TBD |
 | LeasePAL | TBD | Active | TBD |
 | OWE Studio | TBD | Active | TBD |
@@ -239,7 +242,8 @@ project-specific addenda.
 - [x] Implement `sync_rules.py`
 - [x] Migrate HRSE2 `.windsurfrules` and `CLAUDE.md` to local-override pattern
 - [ ] Add `sync_rules.py` step to HRSE2 `setup/first_time_setup.md`
-- [ ] Write Kyle-specific and Greg-specific onboarding addenda
+- [x] Write Kyle-specific and Greg-specific onboarding addenda (Greg's stays
+      a placeholder pending the still-TBD registry entries above)
 - [ ] Confirm OS for Greg and Kyle → validate symlink path assumptions
 - [ ] Define Ke'nekted, LeasePAL, OWE Studio project-level override structure
       (repo location and stack are still TBD in the registry above)

@@ -47,20 +47,23 @@ universes**. This is intentional, not an oversight:
 - [ ] Is Playwright (or an equivalent visual-regression tool) already wired
       up? The golden-path gate assumes baseline screenshots exist — if not,
       that setup is a prerequisite, not an assumption.
-- [ ] Does Ke'nekted have its own service-lifecycle script (like
-      `hrse_manager.py`), or does it need one written as part of onboarding?
+- [ ] Does Ke'nekted have its own service-lifecycle tooling, or does it need
+      some written as part of onboarding? (HRSE2's answer, per ADR-001, is
+      mise + process-compose, replacing an earlier custom script — likely
+      the default answer here too.)
 - [ ] Greg's OS — `sync_rules.py` symlinks work natively on macOS/Linux;
       Windows needs WSL. Confirm before assuming the setup steps below work
       as-is.
 
 ## New Since Roughly 2026-07-09 — Applies to Every Project, Not Just HRSE2
 
-Landed the night of 2026-07-12/13, driven by a real incident on HRSE2 (#233
-burned ~10 review rounds and a full day's Devin credit budget before the
-pattern was caught). These are `ai-platform`-wide changes, so they apply to
-Ke'nekted the moment you're on the platform, even though the incident that
-produced them happened on a different project. Full records:
-`docs/decisions/ADR-002` through `ADR-004` in this repo.
+Landed 2026-07-12 through 2026-07-13, driven by real incidents on HRSE2
+(#233 burned ~10 review rounds and a full day's Devin credit budget before
+the pattern was caught; #236 later showed the first fix wasn't enough — see
+item 3). These are `ai-platform`-wide changes, so they apply to Ke'nekted
+the moment you're on the platform, even though the incidents that produced
+them happened on a different project. Full records: `docs/decisions/ADR-002`
+through `ADR-005` in this repo.
 
 1. **Two new universal Fable subagents**, invoked by Lane 1 (not you):
    `agents/sticky-wicket.md` (reactive circuit breaker — fires after 2
@@ -73,25 +76,40 @@ produced them happened on a different project. Full records:
 2. **`templates/lane1-handoff.md` now has three mandatory fields** on
    every handoff: *Design Alternatives Considered*, *Load-Bearing
    Assumptions*, *Delegated Judgment Calls*.
-3. **Plan-First Implementation:** when a handoff delegates a real design
-   decision to you (non-"none" in that field) or your work mutates git/
-   live data, post your implementation plan and stop before writing code —
-   wait for a reviewed verdict comment first. This is specifically to
-   catch a bad design before credits get spent building it.
+3. **Plan-First Implementation (ADR-004, enforcement fixed by ADR-005):**
+   when a handoff delegates a real design decision to you (non-"none" in
+   that field) or your work mutates git/live data, Plan-First applies —
+   but **the mechanism changed after it was skipped twice on HRSE2 #236
+   despite explicit written instructions.** What you'll actually see now:
+   the handoff arrives **without an Implementation Spec section** — that's
+   deliberate, not Lane 1 forgetting it. The trigger for these issues is
+   **"Plan #N"**, not "Implement #N" — post your plan as a comment and
+   stop; there is nothing to implement from yet. After a reviewed verdict
+   comment, Lane 1 posts a **follow-up comment carrying the Implementation
+   Spec**, and only then does "Implement #N" arrive. Implementing before
+   that follow-up spec exists is a filed protocol violation (see
+   `rules/universal-agent.md` § STANDING-RULE VIOLATIONS GET FILED —
+   HRSE2 #236 / ai-platform#50 is the incident record).
 4. **Tooling Exception:** dev/test tooling (never application code, never
    shipped) can skip the full 3-lane loop when explicitly scoped that way
    — single implementer, one human-reviewed pass.
 5. **GitHub comment formatting:** any comment with a code block goes to a
-   file first, posted via `gh issue comment --body-file <path>`, then
-   fetched back to confirm it rendered correctly — a heredoc-with-nested-
-   backticks pattern was silently mangling completion reports.
-6. HRSE2 is also mid-migration off its custom `hrse_manager.py` service-
-   lifecycle script onto **mise + process-compose**
-   (`docs/decisions/ADR-001-adopt-mise-process-compose-over-custom-manager.md`)
-   — not directly relevant to Ke'nekted's own (still-TBD) tooling, but
-   worth reading as precedent if Ke'nekted ever needs a lifecycle script:
-   the decision was "adopt mature OSS over building custom," which will
-   likely be Marc's default answer for Ke'nekted's equivalent gap too.
+   file first, posted via `--body-file`, then fetched back to confirm it
+   rendered correctly — a heredoc-with-nested-backticks pattern was
+   silently mangling completion reports, and it recurred a **third** time
+   (#234, #235, #236) despite the written rule. ADR-005 recommends
+   mechanizing this rather than relying on the written rule alone — HRSE2
+   built a `mise run post-comment` task that does the file-write +
+   `--body-file` + fetch-back-and-diff automatically; worth the same for
+   Ke'nekted once its own lifecycle tooling exists.
+6. HRSE2 **completed** its migration off a custom `hrse_manager.py`
+   service-lifecycle script onto **mise + process-compose**
+   (`docs/decisions/ADR-001-adopt-mise-process-compose-over-custom-manager.md`,
+   cutover closed 2026-07-13, hrse#224/#237) — not directly relevant to
+   Ke'nekted's own (still-TBD) tooling, but worth reading as precedent if
+   Ke'nekted ever needs a lifecycle tool: the decision was "adopt mature
+   OSS over building custom," which will likely be Marc's default answer
+   for Ke'nekted's equivalent gap too.
 
 ## Setup Steps (Adjust Once the Above Is Known)
 

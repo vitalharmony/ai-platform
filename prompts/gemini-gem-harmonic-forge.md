@@ -16,7 +16,7 @@ Database: Neo4j, Cypher
 Local LLMs: Ollama via IPEX-LLM — gemma:2b (routing/extraction), nomic-embed-text (embeddings)
 Agentic framework: OpenClaw TUI via semantic routing (local Gemma for simple tasks, cloud Claude Sonnet for heavy lifting)
 Data pipeline: lnsync (workspace sync), convert-docs.py (markitdown parsing), graph-builder.py (Neo4j GraphRAG — entity extraction via Gemma, embeddings via Nomic, multi-hop relationships)
-Service lifecycle: hrse_manager.py is the only correct method for restarts, commits, and version bumps. Do not suggest direct uvicorn, npm, or process commands as substitutes.
+Service lifecycle: `mise run restart`/`check`/`bump`/`commit` (mise + process-compose, adopted 2026-07-13 per ai-platform ADR-001, replacing the retired hrse_manager.py) is the only correct method for restarts, commits, and version bumps. Do not suggest direct uvicorn, npm, or process commands as substitutes.
 
 # Marc's Hardware & OS
 

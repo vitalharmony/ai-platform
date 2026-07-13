@@ -1,7 +1,9 @@
 # ADR-001: Adopt mise + process-compose instead of building a custom service manager ("paved")
 
 **Date:** 2026-07-10
-**Status:** Accepted
+**Status:** Accepted — **Implemented, cutover complete 2026-07-13** (hrse#224
+closed; `hrse_manager.py` and its five `manager_*.py` modules removed from
+the HRSE2 repo; see hrse#237 for the final cutover)
 **Decider:** Marc Mangus (platform owner)
 **Supersedes:** the original scope of epic #34 and child issues #36–#39, #41–#43, #45–#46
 
@@ -85,8 +87,9 @@ glue scripts published from this repo, invoked as mise tasks:
   with the adopted stack, gated by **test scripts proving feature parity**
   with every current `hrse_manager.py` capability before cutover (Lane 3
   live verification, per `rules/testing-gate.md`).
-- `hrse_manager.py` remains the sanctioned tool for HRSE2 until that epic
-  completes — no partial/ad-hoc migration.
+- `hrse_manager.py` remained the sanctioned tool for HRSE2 until that epic
+  completed — no partial/ad-hoc migration. **Completed 2026-07-13**: mise +
+  process-compose is now the sole service-lifecycle path for HRSE2.
 - Risk accepted: two new third-party dependencies in the dev loop. Both
   are single static binaries, installable via mise itself, with large
   active communities; the exit cost if either dies is low (configs are

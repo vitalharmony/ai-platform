@@ -21,25 +21,29 @@ Marc's). The exact command is in that section.**
 These are real deviations from the generic platform description — don't be
 surprised by them:
 
-1. **Service lifecycle is `hrse_manager.py`, full stop — until epic #224's
-   cutover lands.** Never run `uvicorn`, `npm run dev`, or `git commit`/
-   `push` manually on this repo, even to save time. If the manager script
-   itself is broken, the fix is to fix the manager, not route around it.
+1. **Service lifecycle is `mise` tasks, full stop.** `hrse_manager.py` and
+   its five `manager_*.py` modules are **retired** (epic #224 closed
+   2026-07-13, final cutover in hrse#237) — the files no longer exist in
+   the repo. Never run `uvicorn`, `npm run dev`, or `git commit`/`push`
+   manually on this repo, even to save time. If a `mise` task itself is
+   broken, the fix is to fix the task, not route around it.
    ```bash
-   python3 hrse_manager.py --restart --no-browser        # normal restart, bumps + commits
-   python3 hrse_manager.py --restart --no-bump --no-git --no-browser   # tooling/test-only
+   mise run restart              # normal restart, bumps + commits
+   mise run restart --no-bump --no-git   # tooling/test-only
+   mise run check                # verification gate (backend mypy + frontend build)
+   mise run bump a|b|c           # version bump only
+   mise run gh-new-issue --title "..." --labels "bug"
+   mise run containers-up/down/status [--service X]
+   mise run dashboard
+   mise run db-heal
+   mise run post-comment --issue N --file <path>   # GitHub comments — never gh issue comment directly
    ```
-   **In progress (2026-07-13): `hrse_manager.py` is being replaced by
-   mise + process-compose** (`ADR-001-adopt-mise-process-compose-over-custom-manager.md`
-   in this repo). `mise.toml` + `process-compose.yaml` already exist at
-   HRSE2's repo root as a working **alternative** — `mise run pc-up` /
-   `pc-down` / `check` / `bump` / `commit` / `restart` — but **never run it
-   concurrently with `hrse_manager.py`**; both default to the same ports
-   (8002/5173) by design, and `hrse_manager.py`'s `pkill` on restart will
-   kill the other tool's process out from under it. Bring one down before
-   starting the other. `hrse_manager.py` stays the sanctioned tool for
-   normal work until #237 (the final cutover) closes — don't switch your
-   own daily habit yet, just don't be surprised the files exist.
+   Full task list: `mise tasks` from the repo root, or read `mise.toml`
+   directly. `mise run restart` returns control immediately (it daemonizes
+   the stack under `process-compose`, same as the old tool's behavior) —
+   if it appears to hang, something is genuinely wrong, don't assume it's
+   just slow. A local git hook (`.githooks/pre-commit`) rejects any commit
+   made while on `main` — work on a branch, always (see hrse#243).
 2. **Neo4j/Cypher rules are HRSE2-local, not platform-universal.**
    `.claude/rules/cypher.md` stays as an HRSE2-specific file — it is not
    symlinked from `ai-platform` because most other Vital Harmony projects
@@ -107,11 +111,12 @@ that ADR before pushing back on the rule or asking Marc about it.
 
 ## New Since 2026-07-09 — Protocol Mechanisms You'll See on Real Issues
 
-Landed the night of 2026-07-12/13, driven directly by a real incident
+Landed 2026-07-12 through 2026-07-13, driven directly by real incidents
 (HRSE2 #233 burned ~10 review rounds and a full day's Devin credit budget
-before the pattern was named). Read `docs/decisions/ADR-002` through
-`ADR-004` in this repo for the full incident records — summary of what
-changes your day-to-day work as Lane 2:
+before the pattern was named; #236 later showed the first Plan-First fix
+wasn't enough on its own — see item 3). Read `docs/decisions/ADR-002`
+through `ADR-005` in this repo for the full incident records — summary of
+what changes your day-to-day work as Lane 2:
 
 1. **Three new Fable subagents exist, invoked by Lane 1, not by you** —
    `agents/product-strategy.md` (HRSE2-local, architecture/strategy
@@ -128,17 +133,29 @@ changes your day-to-day work as Lane 2:
    Assumptions*, *Delegated Judgment Calls*. Read all three before
    implementing — "Delegated Judgment Calls" specifically means Lane 1 is
    deliberately leaving a design decision to you.
-3. **Plan-First Implementation (ADR-004):** if a handoff's Delegated
-   Judgment Calls field is non-"none," or your implementation itself
-   mutates git state or live data, **post your implementation plan as a
-   comment and stop before writing any code.** This isn't extra
-   bureaucracy for its own sake — it's specifically to catch a bad design
-   before Devin credits get spent implementing it. Wait for a Lane 1 (via
-   `pitch-inspection`) verdict comment before proceeding. Real incident
-   this comes from: on #233, you posted a plan, got a solo Lane 1 read
-   that approved a design which then generated ~10 rounds of recurring
-   bugs — this mechanism exists so the review that plan gets is a fresh,
-   independent one, not a repeat of the same mistake.
+3. **Plan-First Implementation (ADR-004, enforcement fixed by ADR-005 —
+   read this one carefully, it changed after a real failure on your own
+   work).** If a handoff's Delegated Judgment Calls field is non-"none,"
+   or your implementation itself mutates git state or live data,
+   Plan-First applies. Original incident (#233): you posted a plan
+   unprompted, got a solo Lane 1 read that approved a design which then
+   generated ~10 rounds of recurring bugs — ADR-004 fixed the *review*
+   (fresh `pitch-inspection` context instead of a solo Lane 1 read).
+   **Second incident (#236): even with an explicit, bolded, three-times-
+   repeated written instruction to stop and plan first, you implemented
+   809 lines straight to `main` before any plan was posted or reviewed.**
+   ADR-005's fix removes the choice instead of asking you to remember it
+   correctly: for a Plan-First issue, **the handoff you receive has no
+   Implementation Spec section** — it's withheld on purpose, so there's
+   nothing to implement from yet. The trigger is **"Plan #N"**, not
+   "Implement #N" — post your plan as a comment and stop. After a
+   `pitch-inspection` verdict (PROCEED / PROCEED WITH NAMED CHANGES /
+   REFORGE), Lane 1 posts a **follow-up comment with the actual
+   Implementation Spec**, and only then does "Implement #N" arrive — wait
+   for both messages, not just the first. Implementing before that
+   follow-up spec exists is a filed protocol violation, not a shortcut
+   (see `rules/universal-agent.md` § STANDING-RULE VIOLATIONS GET FILED;
+   the #236 incident is ai-platform#50).
 4. **Tooling Exception:** dev/test tooling issues (never application code,
    never shipped, labeled `infrastructure`/`tech-debt`) can skip the full
    3-lane loop — single implementer, one human-reviewed pass, no per-round

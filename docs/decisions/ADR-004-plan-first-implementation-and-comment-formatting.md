@@ -6,6 +6,9 @@
 **Extends:** ADR-003's mechanism (`pitch-inspection`) to a second invocation point
 **Amends:** `3-lane-protocol.md` (two new sections), `templates/lane1-handoff.md`
 (new field), `agents/pitch-inspection.md` (Mode B)
+**Extended by:** ADR-005 (enforcement — handoff-splitting + distinct relay
+triggers, after this mechanism's Plan-First gate was skipped on its first
+real use despite explicit written instructions, HRSE2 #236)
 
 ## Context
 

@@ -69,15 +69,19 @@ works. The platform doc (`ai-platform.md` §2) states this explicitly now so
 it doesn't get re-litigated. No action needed — just don't let a future
 session reintroduce the cloud framing.
 
-## 5. `hrse_manager.py` is an HRSE2-only concept, not a platform primitive
+## 5. A project's service-lifecycle tool is HRSE2-only, not a platform primitive
 
-The platform's `universal-agent.md` deliberately doesn't hardcode
-`hrse_manager.py` — it says "every project designates exactly one
-service-lifecycle script" and defers the actual name to the project's own
-`.windsurfrules`. This means Ke'nekted will need its own equivalent script
+The platform's `universal-agent.md` deliberately doesn't hardcode any one
+tool — it says "every project designates exactly one service-lifecycle
+path" and defers the actual mechanism to the project's own `.windsurfrules`.
+HRSE2's is `mise run restart`/`check`/`bump`/`commit` (mise + process-compose,
+adopted 2026-07-13 per ADR-001, replacing the retired custom
+`hrse_manager.py` script). This means Ke'nekted will need its own equivalent
 (or an explicit decision that it doesn't need one) — that's an open item in
 `docs/onboarding-greg.md`, not something this platform repo can supply for
-you.
+you. ADR-001 is worth reading as precedent either way: "adopt mature OSS
+over building custom" is likely Marc's default answer for Ke'nekted's
+equivalent gap too.
 
 ## 6. What actually still needs your decision
 

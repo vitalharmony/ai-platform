@@ -261,6 +261,13 @@ receives the trigger — Lane 1, Lane 2, or Lane 3 alike.
      Implementation) — and posts its implementation plan as a comment,
      then stops. There is nothing to implement from yet, so nothing to
      skip ahead into.
+   - **2b. HITL relays "Plan up for #N"** (→ Lane 1, plan-first issues
+     only, once Lane 2's plan comment from step 2a exists). Lane 1 invokes
+     `pitch-inspection` in plan-review mode and posts the verdict, then
+     (if PROCEED/PROCEED WITH NAMED CHANGES) posts the withheld
+     Implementation Spec as a follow-up comment — see § Plan-First
+     Implementation for the full process. Only after that does HITL send
+     "Implement #N".
 3. **HITL says "Lane 2 done for #N"** (→ Lane 1). Lane 1 checks the **full
    working-tree diff** (`git status` / `git diff` across the whole repo,
    not just the files the handoff predicted) against the handoff's
