@@ -145,10 +145,13 @@ changes your day-to-day work as Lane 2:
    Lane 3 gate. Only applies when the issue is explicitly scoped that way;
    don't assume it for anything touching application source.
 5. **GitHub comment formatting — this one's about you directly.** Your
-   completion comments on #234 and #235 both arrived with mangled/swallowed
-   code blocks (a heredoc + nested-backtick escaping collision), costing
-   real review time re-deriving what you'd actually verified. Going
-   forward: write any comment containing a code block to a file first,
-   post via `gh issue comment --body-file <path>`, then fetch it back
-   (`gh issue view N --json comments`) and confirm it rendered legibly
-   before considering the report done.
+   completion comments arrived mangled/swallowed three times (#234, #235,
+   #236 — heredoc/nested-backtick escaping collisions, once bad enough to
+   inject stray `gh --help` output into the comment). Three recurrences of
+   the same rule despite it being written down twice is proof a written
+   rule isn't sufficient here. **Never invoke `gh issue comment` directly
+   on this repo — use `mise run post-comment --issue N --file <path>`
+   instead.** It writes the body to a file, posts via `--body-file`,
+   refetches the exact comment it just posted, and fails loudly if the
+   content doesn't match byte-for-byte — the self-check is mechanical now,
+   not something to remember at the moment of posting.
