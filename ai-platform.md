@@ -97,11 +97,28 @@ ai-platform/
 ├── templates/
 │   ├── lane1-handoff.md            # Lane 1 → 2 structured handoff template
 │   └── hitl-test-review.md         # Tech Lead HITL approval checklist
+├── agents/                         # universal, project-agnostic subagents only —
+│   │                                # see the note below before adding one
+│   ├── sticky-wicket.md            # reactive cross-lane thrashing circuit breaker (Fable)
+│   └── pitch-inspection.md         # proactive pre-flight handoff second read (Fable)
 ├── docs/
 │   ├── decisions/                  # platform ADRs (ADR-NNN-*.md, sequential)
 │   └── onboarding-*.md             # per-developer onboarding addenda
-└── sync_rules.py                   # bootstrapper — clone + symlink setup
+└── sync_rules.py                   # bootstrapper — clone + symlink setup (rules/ only
+                                     # today; agents/ distribution tracked in #47, manual
+                                     # symlink into {project}/.claude/agents/ until then)
 ```
+
+**`agents/` note:** only agents written project-agnostically (no hardcoded
+project name, no project-specific domain rules baked in) belong here.
+HRSE2 also has a `product-strategy` subagent (`.claude/agents/`, not
+symlinked) — its content is genuinely CymaGraph-specific (explicit
+"CymaGraph (HRSE2)" framing, a sovereignty/privacy filter tied to
+CymaGraph's own positioning), so it stays project-local rather than being
+force-fit into this directory. Generalizing it into a project-agnostic
+version (parameterized per project, matching `sticky-wicket`/
+`pitch-inspection`'s pattern) is a real future improvement, not done yet —
+flag it if picked up.
 
 ### Per-Project Structure (each sovereign repo)
 
@@ -112,9 +129,12 @@ ai-platform/
 ├── .claude/rules/                  # path-scoped rules (fire on matching files)
 │   ├── backend-python.md           # → symlink to ai-platform/rules/backend-python.md
 │   └── frontend-typescript.md      # → symlink to ai-platform/rules/frontend-typescript.md
-└── (project may keep additional local-only rule files, e.g. a Cypher/Neo4j
-    addendum, that are NOT part of the platform sync because they don't
-    apply universally)
+├── .claude/agents/                 # universal subagents (manual symlink today, #47
+│   ├── sticky-wicket.md            # tracks proper sync_rules.py distribution)
+│   └── pitch-inspection.md         # → both symlink to ai-platform/agents/*.md
+└── (project may keep additional local-only rule/agent files, e.g. a
+    Cypher/Neo4j addendum or a project-specific strategy subagent, that are
+    NOT part of the platform sync because they don't apply universally)
 ```
 
 **Override precedence (lowest → highest):**
