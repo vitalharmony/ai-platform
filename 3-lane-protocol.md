@@ -481,6 +481,86 @@ reporting completion that doesn't match reality) are not a design problem;
 no pre-flight review touches that class. It is governed separately by the
 verify-live-not-source standard.
 
+## Plan-First Implementation — Reviewing Lane 2's Plan Before Credits Burn
+
+`pitch-inspection` (above) reviews Lane 1's *design* before handoff. But
+some handoffs deliberately delegate a design decision to Lane 2 — and Lane
+2's resolution of that decision is new, unreviewed design content that
+otherwise gets its first review only after implementation credits are
+spent. Real incident: on HRSE2 #233, Lane 2 posted an implementation plan
+unprompted and waited for Lane 1 sign-off; the solo Lane 1 read caught two
+real gaps but approved the disposable-branch design that went on to
+generate the issue's recurring bug class across ~10 rounds. The pause was
+right; the review was too shallow. This section makes the pause required
+for a narrow, self-declared class and routes the review through fresh
+context instead of a Lane 1 solo read. Full evaluation, including the
+honest cost/benefit case against building this at all:
+`docs/decisions/ADR-004-plan-first-implementation-and-comment-formatting.md`.
+
+**Trigger — self-declared by the handoff, not a size judgment.**
+`templates/lane1-handoff.md` carries a mandatory field, *Delegated
+Judgment Calls* (design decisions Lane 1 explicitly leaves to Lane 2;
+"none" is the common, zero-cost answer — most handoffs are unaffected).
+Plan-first is required when any of:
+1. Delegated Judgment Calls is anything other than "none."
+2. The implementation's own operation mutates git state or live data (same
+   condition as `pitch-inspection` trigger 3), whether or not the issue is
+   under the Tooling Exception.
+3. HITL explicitly says "Plan-first #N."
+
+**Process — one extra relay, never a full round-trip:**
+- On "Implement #N" for a plan-first issue, Lane 2 posts its
+  implementation plan as a comment on #N — covering, at minimum, its
+  resolution of each delegated judgment call and the failure/cleanup paths
+  of any git- or data-mutating mechanics — and **stops before writing any
+  code.** The plan is a natural prefix of work Lane 2 was doing anyway (it
+  has already fetched the issue and read the cited files); the marginal
+  Devin cost is one comment.
+- HITL relays "Plan up for #N" (→ Lane 1). Lane 1 invokes `pitch-inspection`
+  in **plan-review mode** (see `agents/pitch-inspection.md`), passing the
+  original handoff plus Lane 2's plan; the review covers only the delta
+  Lane 2 introduced, not a re-review of the whole handoff. Lane 1 posts the
+  verdict as a single comment on #N. This is a Claude-side subagent call —
+  no Devin credits, no gate cycle.
+- **PROCEED / PROCEED WITH NAMED CHANGES:** Lane 2 fetches the verdict
+  comment and implements, incorporating named changes directly — no
+  re-submission, no second review pass. **REFORGE:** the named flaw goes
+  back to Lane 2 for one revised plan; if the second plan still draws
+  REFORGE, that is an escalation to HITL, never a third review round. Same
+  no-thrash cap as the Pre-Flight Second Read.
+- A plan-first issue where Lane 2 starts implementing without a
+  posted-and-reviewed plan is a protocol violation, same class as skipping
+  the HITL close gate.
+
+**What this does not cover:** faithfulness of Lane 2's later completion
+reports to the approved plan (verification-honesty, governed by
+verify-live-not-source and Lane 1's full-diff review) and acceptance-
+criteria defects in the issue itself (Lane 1/epic scope). HRSE2 #233's
+false-completion-report rounds and its "passes twice consecutively"
+contract error would not have been caught here — see the ADR for the full
+honest partial-credit accounting.
+
+## GitHub Comment Formatting — Every Lane, Every Post
+
+Real incident, twice in one night: on HRSE2 #234 and #235, Lane 2's
+completion comments arrived with swallowed/mangled code blocks — content
+posted via an inline `gh issue comment --body "$(cat <<'EOF' ... EOF)"`
+heredoc containing nested triple-backtick code fences collided with
+GitHub's markdown parser and lost content, making the comment unreadable
+without independently re-verifying every claim from scratch. This is a
+mechanical formatting bug, not a judgment call — fix it as a standing rule,
+not a subagent.
+
+**Any lane posting a comment containing a code block:**
+1. Write the comment body to a file first, then post via
+   `gh issue comment --body-file <path>` (or the PR/comment equivalent) —
+   never an inline heredoc with nested backticks.
+2. **Self-check before considering the post done:** fetch the comment back
+   (`gh issue view N --json comments` or equivalent) and confirm it
+   rendered legibly — no swallowed code blocks, no stripped content. This
+   is the verify-live-not-source standard applied to a lane's own GitHub
+   output, not just to code behavior.
+
 ## Team Topology
 
 | Role | Person | Responsibility |

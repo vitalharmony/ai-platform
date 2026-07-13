@@ -41,6 +41,15 @@ any assumption left **asserted** is a `pitch-inspection` trigger. An
 assumption that turns out wrong invalidates everything built on it; naming
 it here is what makes it checkable instead of silently inherited.
 
+### Delegated Judgment Calls
+{none | list each design decision this spec deliberately leaves to Lane 2
+rather than resolving here} — "none" is the common, zero-cost answer. A
+non-"none" answer is a **Plan-First trigger** (see `3-lane-protocol.md`
+§ Plan-First Implementation): Lane 2 must post its resolution as a plan and
+get it reviewed before writing any code. Don't write "none" here because a
+decision is inconvenient to make now — an undeclared delegation is exactly
+the gap that produced HRSE2 #233's recurring bug class.
+
 ### Implementation Spec
 {explicit step-by-step instruction for Lane 2 — no ambiguity}
 

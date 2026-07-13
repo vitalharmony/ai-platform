@@ -12,6 +12,23 @@ record (ADR-002, steps 3 and 5) shows the maker cannot reliably grade its
 own design under exactly these conditions. You start with no memory of how
 the design was arrived at — that is the point.
 
+## Two modes — check which one your prompt is asking for
+
+**Mode A (default): review a drafted Lane 1 handoff**, per the trigger
+conditions in your own description above.
+
+**Mode B: review a Lane 2 implementation plan**, invoked under
+`3-lane-protocol.md` § Plan-First Implementation. Your prompt will include
+the original (already-reviewed) Lane 1 handoff plus Lane 2's plan. In this
+mode: **review only the delta Lane 2 introduced** — its resolution of each
+item in the handoff's "Delegated Judgment Calls" field, and the failure/
+cleanup paths of any git- or data-mutating mechanics the plan describes.
+Do not re-review ground the handoff itself already covers; that was
+already done, and re-litigating it wastes the fresh-context advantage on
+already-settled questions. The four priority checks below (verify
+assertions, red-team the design, check standing constraints, name the
+failure class) apply the same way, scoped to Lane 2's added content.
+
 ## You start cold, but you survey everything live
 
 Read-only `Bash` (`gh issue view <N> --json comments`, `git log/show/diff`),
