@@ -112,9 +112,10 @@ ai-platform/
 │   ├── decisions/                  # platform ADRs (ADR-NNN-*.md, sequential)
 │   ├── operator-diffs.md           # HITL-facing "what's different from the norm" notes
 │   └── onboarding-*.md             # per-developer onboarding addenda
-└── sync_rules.py                   # bootstrapper — clone + symlink setup (rules/ only
-                                     # today; agents/ distribution tracked in #47, manual
-                                     # symlink into {project}/.claude/agents/ until then)
+└── sync_rules.py                   # bootstrapper — clone + symlink setup for BOTH
+                                     # rules/ (UNIVERSAL_RULE_FILES list) and agents/
+                                     # (auto-discovered, every *.md in agents/) into
+                                     # {project}/.claude/rules/ and .claude/agents/
 ```
 
 **`agents/` note:** only agents written project-agnostically (no hardcoded
@@ -137,9 +138,9 @@ flag it if picked up.
 ├── .claude/rules/                  # path-scoped rules (fire on matching files)
 │   ├── backend-python.md           # → symlink to ai-platform/rules/backend-python.md
 │   └── frontend-typescript.md      # → symlink to ai-platform/rules/frontend-typescript.md
-├── .claude/agents/                 # universal subagents (manual symlink today, #47
-│   ├── sticky-wicket.md            # tracks proper sync_rules.py distribution)
-│   └── pitch-inspection.md         # → both symlink to ai-platform/agents/*.md
+├── .claude/agents/                 # universal subagents, symlinked by sync_rules.py
+│   ├── sticky-wicket.md            # → ai-platform/agents/sticky-wicket.md
+│   └── pitch-inspection.md         # → ai-platform/agents/pitch-inspection.md
 └── (project may keep additional local-only rule/agent files, e.g. a
     Cypher/Neo4j addendum or a project-specific strategy subagent, that are
     NOT part of the platform sync because they don't apply universally)
@@ -163,8 +164,12 @@ machine into the platform, and again whenever platform rules change.
 **What it does:**
 1. Clones (or pulls) `vitalharmony/ai-platform` into `~/ai-platform/`.
 2. Creates symlinks from the project's `.claude/rules/` to the platform's
-   universal rule files.
-3. Verifies symlink integrity and reports any broken links.
+   universal rule files, **and** from `.claude/agents/` to every
+   auto-discovered agent in `ai-platform/agents/` (no separate list to
+   maintain — anything placed in `agents/` is definitionally universal,
+   see the `agents/` note above).
+3. Verifies symlink integrity (both rules and agents) and reports any
+   broken links.
 4. Prints a checklist of manual steps remaining (e.g. project-level
    `CLAUDE.md` setup).
 

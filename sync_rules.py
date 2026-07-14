@@ -2,9 +2,9 @@
 """
 ai-platform bootstrapper.
 
-Wires a project's .claude/rules/ into this platform repo's universal rule
-files via symlinks, so every project always reads the current platform
-rules rather than a stale copy.
+Wires a project's .claude/rules/ and .claude/agents/ into this platform
+repo's universal rule/agent files via symlinks, so every project always
+reads the current platform rules/agents rather than a stale copy.
 
 Usage:
     python3 ~/ai-platform/sync_rules.py --project /path/to/project
@@ -18,12 +18,27 @@ from pathlib import Path
 
 PLATFORM_ROOT = Path(__file__).resolve().parent
 RULES_DIR = PLATFORM_ROOT / "rules"
+AGENTS_DIR = PLATFORM_ROOT / "agents"
 
 # Rule files that are universal across every project's stack.
 UNIVERSAL_RULE_FILES = [
     "backend-python.md",
     "frontend-typescript.md",
 ]
+
+
+def _universal_agent_files() -> list[str]:
+    """Auto-discover every agent in ai-platform/agents/.
+
+    No separate list to keep in sync: per ai-platform.md's own convention,
+    anything placed in agents/ is definitionally meant to be universal and
+    project-agnostic (see the note in ai-platform.md before adding one) —
+    unlike rules/, which mixes universal files with ones a project opts
+    into individually.
+    """
+    if not AGENTS_DIR.is_dir():
+        return []
+    return sorted(p.name for p in AGENTS_DIR.glob("*.md"))
 
 
 def pull_platform() -> bool:
@@ -41,18 +56,17 @@ def pull_platform() -> bool:
     return True
 
 
-def link_project(project_root: Path) -> bool:
-    """Symlinks project .claude/rules/ entries to platform universal rules."""
-    claude_rules_dir = project_root / ".claude" / "rules"
-    claude_rules_dir.mkdir(parents=True, exist_ok=True)
+def _link_dir(source_dir: Path, target_dir: Path, filenames: list[str], label: str) -> bool:
+    """Symlinks target_dir/<filename> -> source_dir/<filename> for each filename."""
+    target_dir.mkdir(parents=True, exist_ok=True)
 
     ok = True
-    for rule_filename in UNIVERSAL_RULE_FILES:
-        source = RULES_DIR / rule_filename
-        target = claude_rules_dir / rule_filename
+    for filename in filenames:
+        source = source_dir / filename
+        target = target_dir / filename
 
         if not source.exists():
-            print(f"[ERROR] Platform rule file missing: {source}", file=sys.stderr)
+            print(f"[ERROR] Platform {label} file missing: {source}", file=sys.stderr)
             ok = False
             continue
 
@@ -77,12 +91,11 @@ def link_project(project_root: Path) -> bool:
     return ok
 
 
-def verify_links(project_root: Path) -> bool:
-    """Confirms every expected symlink resolves to the platform source."""
-    claude_rules_dir = project_root / ".claude" / "rules"
+def _verify_dir(target_dir: Path, filenames: list[str]) -> bool:
+    """Confirms every expected symlink in target_dir resolves to a real file."""
     all_good = True
-    for rule_filename in UNIVERSAL_RULE_FILES:
-        target = claude_rules_dir / rule_filename
+    for filename in filenames:
+        target = target_dir / filename
         if not target.is_symlink():
             print(f"[BROKEN] {target} is not a symlink.", file=sys.stderr)
             all_good = False
@@ -93,12 +106,27 @@ def verify_links(project_root: Path) -> bool:
     return all_good
 
 
+def link_project(project_root: Path) -> bool:
+    """Symlinks project .claude/rules/ and .claude/agents/ to platform sources."""
+    rules_ok = _link_dir(RULES_DIR, project_root / ".claude" / "rules", UNIVERSAL_RULE_FILES, "rule")
+    agent_files = _universal_agent_files()
+    agents_ok = _link_dir(AGENTS_DIR, project_root / ".claude" / "agents", agent_files, "agent")
+    return rules_ok and agents_ok
+
+
+def verify_links(project_root: Path) -> bool:
+    """Confirms every expected rule and agent symlink resolves to the platform source."""
+    rules_ok = _verify_dir(project_root / ".claude" / "rules", UNIVERSAL_RULE_FILES)
+    agents_ok = _verify_dir(project_root / ".claude" / "agents", _universal_agent_files())
+    return rules_ok and agents_ok
+
+
 def print_remaining_steps(project_root: Path) -> None:
     print("\n[REMAINING STEPS]")
     print(f"  1. Confirm {project_root}/CLAUDE.md points to ai-platform/3-lane-protocol.md")
     print(f"  2. Confirm {project_root}/.windsurfrules only carries project-specific overrides")
     print("  3. Read ai-platform/3-lane-protocol.md before pulling a first ticket")
-    print("  4. Re-run with --pull whenever platform rules change")
+    print("  4. Re-run with --pull whenever platform rules or agents change")
 
 
 def main() -> int:
@@ -132,7 +160,7 @@ def main() -> int:
             print("[ERROR] Symlink verification failed.", file=sys.stderr)
             return 1
 
-        print(f"\n[OK] {project_root} is linked to ai-platform rules.")
+        print(f"\n[OK] {project_root} is linked to ai-platform rules and agents.")
         print_remaining_steps(project_root)
 
     return 0
