@@ -88,6 +88,20 @@ ai-platform/
 ├── ai-platform.md                  # this document
 ├── README.md                       # repo landing page
 ├── 3-lane-protocol.md              # condensed operational protocol (agent-readable)
+├── mise.toml                       # this repo's OWN tooling (ai-platform#54) — check/commit/
+│                                    # gh-new-issue/post-comment only, deliberately no
+│                                    # bump/restart (no running artifact to stamp — see
+│                                    # templates/golden-path/README.md's "docs/tooling-repo
+│                                    # subset" section for the full reasoning)
+├── scripts/
+│   └── git_commit.py               # this repo's own commit task — calls into
+│                                    # tools/transaction-log/ directly, doesn't reimplement it
+├── transaction-log.md              # this repo's own transaction log — cleared on push to
+│                                    # main (no version bump exists to hang rotation on)
+├── .githooks/
+│   └── pre-commit                  # rejects direct commits to main (ai-platform#52); every
+│                                    # clone must run `git config core.hooksPath .githooks`
+├── .gitignore
 ├── prompts/                        # Gemini Gem / external-tool prompt templates
 ├── rules/
 │   ├── universal-claude.md         # universal CLAUDE.md directives (all projects)
@@ -102,8 +116,13 @@ ai-platform/
 │   └── golden-path/                # reference mise.toml + process-compose.yaml +
 │                                    # workflow doc for a project's service-lifecycle path
 ├── tools/
-│   └── transaction-log/            # published, project-agnostic transaction-log +
-│                                    # diffstat glue (library + CLI)
+│   ├── transaction-log/            # published, project-agnostic transaction-log +
+│   │                                # diffstat glue (library + CLI)
+│   └── gh/                         # published, repo-agnostic GitHub helpers (ai-platform#53)
+│                                    # — post_comment.py (self-checking --body-file post) +
+│                                    # gh_issue.py (create + optional board-add); --repo is
+│                                    # required with no default on both (see README.md there
+│                                    # for the mis-post incident that caused this)
 ├── agents/                         # universal, project-agnostic subagents only —
 │   │                                # see the note below before adding one
 │   ├── sticky-wicket.md            # reactive cross-lane thrashing circuit breaker (Fable)
