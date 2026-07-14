@@ -113,3 +113,19 @@ See HRSE2's actual `mise.toml`/`process-compose.yaml`/`scripts/` for a
 concrete, live-verified reference implementation — treat it as a worked
 example to adapt, not something to symlink (its container/dashboard/
 db-heal tasks are CymaGraph-specific and not part of this golden path).
+
+## The docs/tooling-repo subset (no running artifact)
+
+Not every project has a service to restart or an artifact to version-stamp.
+`ai-platform`'s own `mise.toml` (repo root) is the sanctioned pattern for
+that case (ai-platform#54) — resolved via `product-strategy`, not just
+deferred: `check` + `commit` + `gh-new-issue` + `post-comment` only, no
+`bump`/`restart`/`pc-up`/`pc-down`. A version bump would gate nothing here
+— consumers pull this repo via `sync_rules.py --pull`, so the git SHA
+already **is** the version, and `ai-platform.md`'s own "Draft v0.2" header
+is a hand-maintained spec-status marker deliberately bumped at real
+milestones, not automated per-commit. Without a bump to hang transaction-
+log rotation on, `commit --push` clears the log instead — push is this
+kind of repo's genuine "publish" event. Use this subset (not the full
+pattern above) for any future docs/tooling-only project; don't invent a
+fake `bump`/`restart` ceremony just to match the shape.
