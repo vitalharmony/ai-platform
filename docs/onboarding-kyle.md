@@ -56,8 +56,17 @@ surprised by them:
    rules exactly, so nothing extra to learn there.
 4. **Bug fixes/features go through the 3-lane loop as normal** — you are
    Lane 2 (Devin Local/Muscle) taking Lane 1 (Claude Code) handoffs, gated
-   by Lane 3 before merge. First ticket: pull a `tech-debt`-labeled issue
-   from https://github.com/vitalharmony/hrse/issues.
+   by Lane 3 before merge.
+5. **Don't just pull whatever `tech-debt`-labeled issue looks interesting —
+   check `docs/PRIORITIES.md` first** (HRSE2 repo root). It's the canonical
+   cross-repo (hrse + ai-platform) sequencing doc — what's actually next,
+   with the reasoning, and what's deliberately parked and why. **It is not
+   reflected on the GitHub Projects v2 board** — the board's Status column
+   doesn't carry priority ordering, so don't infer "next" from board
+   position. Kept current by Lane 1's `/sprint-plan` skill; if something
+   you're about to pick up isn't mentioned there, flag it to Marc rather
+   than assuming it's fine to start — the doc may just be missing it (real
+   drift), or it may be a deliberate cut you're about to undo.
 
 ## Setup Steps
 
