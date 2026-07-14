@@ -84,23 +84,30 @@ reading why is how the incident recurs.
   a rule that depends on being remembered at a routine, high-frequency
   moment isn't sufficient on its own; make the compliant path the only
   easy one to invoke instead.
+- **`gh-new-issue`/`post-comment` call `tools/gh/` directly, not a
+  project-local script copy** (ai-platform#53). The original per-project
+  scripts hardcoded their repo slug, which caused a real mis-post — this
+  tool ran for an `ai-platform` issue out of HRSE2 habit and silently
+  posted to the wrong repo because of the hardcoded default. `tools/gh/`
+  requires `--repo` explicitly (no default) and prints a banner naming the
+  resolved target before acting; a project supplies its own slug once via
+  `[env]`, not by hand-copying a script.
 
 ## What a project has to supply itself
 
-This template shows the *shape*; these scripts are project-specific
-because they touch project-specific state (your version file, your repo
-layout, your project board):
+This template shows the *shape*; these two scripts are still
+project-specific because they touch project-specific state (your version
+file, your repo layout) — `gh_issue.py`/`post_comment.py` are **not**
+project-specific anymore, see `tools/gh/README.md` in this repo:
 
 - `scripts/bump_version.py` — reads/writes your project's version file.
 - `scripts/git_commit.py` — the three-tier commit-message hierarchy
   (explicit override > auto-bump message > default), plus the
   transaction-log wiring — call into `tools/transaction-log/` from this
   repo rather than reimplementing it.
-- `scripts/gh_issue.py` — `gh issue create` + `gh project item-add`
-  wrapper, with your project's board/owner/number.
-- `scripts/post_comment.py` — can be copied close to verbatim from
-  HRSE2's `scripts/post_comment.py`; it has no project-specific state
-  beyond the repo slug.
+- `[env]`'s `GH_REPO` (and, if this project has a board,
+  `GH_PROJECT_OWNER`/`GH_PROJECT_NUMBER`) — the only project-specific input
+  `tools/gh/gh_issue.py`/`post_comment.py` need; see `mise.toml` above.
 
 See HRSE2's actual `mise.toml`/`process-compose.yaml`/`scripts/` for a
 concrete, live-verified reference implementation — treat it as a worked

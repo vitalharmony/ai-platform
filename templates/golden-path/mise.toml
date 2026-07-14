@@ -3,11 +3,13 @@
 # Extracted from HRSE2's live, battle-tested config after it proved itself
 # across the hrse#224 cutover epic. This is a STRUCTURE template, not a
 # drop-in — replace every <PLACEHOLDER>, adjust service names/ports, and
-# supply your own scripts/bump_version.py, scripts/git_commit.py,
-# scripts/gh_issue.py, scripts/post_comment.py (see README.md in this
-# directory for what each one needs to do; tools/transaction-log/ in this
-# repo is the one piece that's actually published as reusable code —
-# scripts/git_commit.py should call into it, not reimplement it).
+# supply your own scripts/bump_version.py, scripts/git_commit.py (see
+# README.md in this directory for what each one needs to do;
+# tools/transaction-log/ in this repo is the one piece that's actually
+# published as reusable code — scripts/git_commit.py should call into it,
+# not reimplement it). gh_issue.py/post_comment.py are NOT project-specific
+# anymore (ai-platform#53) — call tools/gh/ directly, supplying only the
+# repo/board slug via [env] below.
 #
 # Every task here exists because of a specific incident during HRSE2's
 # cutover — see README.md's "Why each piece looks the way it does" section
@@ -23,6 +25,11 @@ process-compose = "<PROCESS_COMPOSE_VERSION>"
 [env]
 <PROJECT>_BACKEND_PORT = "<BACKEND_PORT>"
 <PROJECT>_FRONTEND_PORT = "<FRONTEND_PORT>"
+GH_REPO = "<owner>/<repo>"
+# Omit these two if this project has no project board yet — gh_issue.py
+# skips board-add rather than failing when they're unset.
+GH_PROJECT_OWNER = "<owner>"
+GH_PROJECT_NUMBER = "<project-number>"
 
 [tasks.pc-up]
 description = "Start the <PROJECT> backend/frontend stack under process-compose"
@@ -118,7 +125,7 @@ mise run pc-up
 """
 
 [tasks.gh-new-issue]
-description = "Create a GitHub issue and add it to the project board"
+description = "Create a GitHub issue and add it to the project board (tools/gh/gh_issue.py)"
 usage = '''
 flag "--title <title>" help="Issue title" required=#true
 flag "--body <body>" help="Issue body" default="*Created via mise gh-new-issue*"
@@ -126,16 +133,17 @@ flag "--labels <labels>" help="Comma-separated labels" default="feature"
 '''
 run = """
 set -e
-python3 scripts/gh_issue.py \
+python3 ~/ai-platform/tools/gh/gh_issue.py \
+  --repo "$GH_REPO" \
   --title "$usage_title" \
   --body "$usage_body" \
   --labels "$usage_labels"
 """
 
 [tasks.post-comment]
-description = "Post a GitHub issue comment via --body-file with a mandatory self-check (ADR-004/ADR-005)"
+description = "Post a GitHub issue comment via --body-file with a mandatory self-check (tools/gh/post_comment.py, ADR-004/ADR-005)"
 usage = '''
 flag "--issue <issue>" help="Issue number" required=#true
 flag "--file <file>" help="Path to a file containing the comment body" required=#true
 '''
-run = "python3 scripts/post_comment.py --issue \"$usage_issue\" --file \"$usage_file\""
+run = "python3 ~/ai-platform/tools/gh/post_comment.py --repo \"$GH_REPO\" --issue \"$usage_issue\" --file \"$usage_file\""
