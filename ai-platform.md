@@ -246,6 +246,15 @@ project-specific addenda.
 | LeasePAL | TBD | Active | TBD |
 | OWE Studio | TBD | Active | TBD |
 
+**Cross-project sequencing:** `docs/PRIORITIES.md` in the `hrse` repo is the
+canonical "what gets worked on next" doc — it deliberately spans both
+`vitalharmony/hrse` and `vitalharmony/ai-platform` issues (Marc operates
+across both from the same working session, so a hrse-only or
+ai-platform-only priority list would miss real interdependencies). Kept in
+sync by HRSE2's `/sprint-plan` skill. As more projects come online, this
+may need to move to a platform-level location — not done yet since it's
+only ever covered two repos so far.
+
 ---
 
 ## 8. Open Items (pending before v1.0)
