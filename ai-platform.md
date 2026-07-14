@@ -107,7 +107,9 @@ ai-platform/
 ├── agents/                         # universal, project-agnostic subagents only —
 │   │                                # see the note below before adding one
 │   ├── sticky-wicket.md            # reactive cross-lane thrashing circuit breaker (Fable)
-│   └── pitch-inspection.md         # proactive pre-flight handoff second read (Fable)
+│   ├── pitch-inspection.md         # proactive pre-flight handoff second read (Fable)
+│   └── product-strategy.md         # high-judgment product/architecture strategy calls (Fable) —
+│                                    # {project}-parameterized, invoking session supplies context
 ├── docs/
 │   ├── decisions/                  # platform ADRs (ADR-NNN-*.md, sequential)
 │   ├── operator-diffs.md           # HITL-facing "what's different from the norm" notes
@@ -120,14 +122,16 @@ ai-platform/
 
 **`agents/` note:** only agents written project-agnostically (no hardcoded
 project name, no project-specific domain rules baked in) belong here.
-HRSE2 also has a `product-strategy` subagent (`.claude/agents/`, not
-symlinked) — its content is genuinely CymaGraph-specific (explicit
-"CymaGraph (HRSE2)" framing, a sovereignty/privacy filter tied to
-CymaGraph's own positioning), so it stays project-local rather than being
-force-fit into this directory. Generalizing it into a project-agnostic
-version (parameterized per project, matching `sticky-wicket`/
-`pitch-inspection`'s pattern) is a real future improvement, not done yet —
-flag it if picked up.
+`product-strategy.md` was originally HRSE2-local (built 2026-07-10, before
+this canonical pattern existed) with CymaGraph specifics hardcoded
+throughout (explicit "CymaGraph (HRSE2)" framing, a sovereignty/privacy
+filter tied to CymaGraph's own BYOC/BYOK positioning). Generalized
+2026-07-13 (ai-platform#48): the project name and its positioning/ethical
+commitments are now supplied by the invoking session's prompt instead of
+hardcoded — the agent reads whatever the project has actually committed to
+(its own README/ADRs) rather than assuming CymaGraph's stance applies
+everywhere. When invoking it, name the project explicitly and point at
+where its positioning commitments (if any) are documented.
 
 ### Per-Project Structure (each sovereign repo)
 
