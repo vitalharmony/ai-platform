@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Block direct commits to main. Per hrse#243 / ADR-005: handoff-splitting and
+# written process instructions have both, separately, failed to stop Lane 2
+# from committing straight to main (HRSE2 #236, twice in one day). This is
+# the mechanical backstop that doesn't depend on any lane remembering a rule.
+# Ported to ai-platform via ai-platform#52 — same gap class as #50.
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "main" ]; then
+  echo "ERROR: direct commits to 'main' are blocked." >&2
+  echo "Create a branch first: git checkout -b <name>" >&2
+  exit 1
+fi
+
+exit 0

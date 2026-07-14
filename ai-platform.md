@@ -189,6 +189,16 @@ python3 ~/ai-platform/sync_rules.py --pull
 **Platform:** macOS and Linux. Symlinks work natively on both. Windows is
 not currently supported — use WSL if needed.
 
+**Branch protection (required, not automated by the bootstrapper):** this
+repo has a `.githooks/pre-commit` hook (added via ai-platform#52) that
+rejects any commit made while on `main`. It is **not wired up by default**
+— every clone must run this once:
+```bash
+git config core.hooksPath .githooks
+```
+Without it, nothing stops a direct commit to `main` (this bit HRSE2 on
+#236, then this repo itself before the hook existed — see ADR-005).
+
 ---
 
 ## 5. Team Topology
