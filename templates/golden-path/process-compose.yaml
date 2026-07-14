@@ -1,0 +1,42 @@
+# Golden-path process-compose.yaml reference template (ai-platform#34).
+# Extracted from HRSE2's live config. Replace service names, commands,
+# ports, and health-check paths for your project; the shape (readiness
+# probe + restart policy) is what matters.
+
+version: "0.5"
+
+processes:
+  <project>-backend:
+    command: "<YOUR_BACKEND_START_COMMAND>"
+    working_dir: backend
+    availability:
+      # exit_on_failure, not the process-compose default: without this, a
+      # backend that crashes on startup (e.g. a port already bound by a
+      # stale process) can still report a stale "Ready" status from a
+      # PRIOR successful probe, because the default restart policy doesn't
+      # tear down and re-evaluate readiness on its own. Real incident.
+      restart: "exit_on_failure"
+    readiness_probe:
+      http_get:
+        host: 127.0.0.1
+        scheme: http
+        path: <YOUR_HEALTH_CHECK_PATH>
+        port: ${<PROJECT>_BACKEND_PORT}
+        status_code: 200
+      initial_delay_seconds: 1
+      period_seconds: 0.5
+      failure_threshold: 60
+
+  <project>-frontend:
+    command: "<YOUR_FRONTEND_START_COMMAND>"
+    working_dir: frontend
+    readiness_probe:
+      http_get:
+        host: 127.0.0.1
+        scheme: http
+        path: /
+        port: ${<PROJECT>_FRONTEND_PORT}
+        status_code: 200
+      initial_delay_seconds: 1
+      period_seconds: 0.5
+      failure_threshold: 60

@@ -1,0 +1,141 @@
+# Golden-path mise.toml reference template (ai-platform#34).
+#
+# Extracted from HRSE2's live, battle-tested config after it proved itself
+# across the hrse#224 cutover epic. This is a STRUCTURE template, not a
+# drop-in — replace every <PLACEHOLDER>, adjust service names/ports, and
+# supply your own scripts/bump_version.py, scripts/git_commit.py,
+# scripts/gh_issue.py, scripts/post_comment.py (see README.md in this
+# directory for what each one needs to do; tools/transaction-log/ in this
+# repo is the one piece that's actually published as reusable code —
+# scripts/git_commit.py should call into it, not reimplement it).
+#
+# Every task here exists because of a specific incident during HRSE2's
+# cutover — see README.md's "Why each piece looks the way it does" section
+# before changing the shape of any task.
+
+[tools]
+# Pin every language/tool version explicitly — this is what makes
+# `mise install` a real onboarding bootstrap step, not just documentation.
+python = "<PYTHON_VERSION>"
+node = "<NODE_VERSION>"
+process-compose = "<PROCESS_COMPOSE_VERSION>"
+
+[env]
+<PROJECT>_BACKEND_PORT = "<BACKEND_PORT>"
+<PROJECT>_FRONTEND_PORT = "<FRONTEND_PORT>"
+
+[tasks.pc-up]
+description = "Start the <PROJECT> backend/frontend stack under process-compose"
+run = """
+# Preflight: refuse to start a second stack on top of a running one.
+# Real incident this guards against: a stale native/manual process still
+# holding the port makes process-compose's own readiness probe pass
+# against the WRONG process, reporting "Ready" while the actual managed
+# service never started.
+for p in ${<PROJECT>_BACKEND_PORT} ${<PROJECT>_FRONTEND_PORT} <CONTROL_PORT>; do
+  if ss -tln | grep -qE ":$p\\b"; then
+    echo "Port $p is already in use. Bring down any other stack running on this port first." >&2
+    exit 1
+  fi
+done
+# -D (--detached) is load-bearing: without it, `process-compose up` runs in
+# the foreground and never returns control to the caller, even after the
+# stack comes up successfully. A real incident (mid-cutover, an agent got
+# stuck waiting on a `restart` call that had actually already succeeded)
+# is what surfaced this.
+process-compose up -f process-compose.yaml -p <CONTROL_PORT> -t=false -D
+"""
+
+[tasks.pc-down]
+description = "Stop the <PROJECT> backend/frontend stack"
+run = "process-compose -p <CONTROL_PORT> down"
+
+[tasks.check]
+description = "Run the verification gate — replace with your project's actual checks"
+run = [
+    "cd backend && <YOUR_TYPECHECK_COMMAND>",
+    "cd frontend && <YOUR_BUILD_COMMAND>",
+]
+
+[tasks.bump]
+description = "Bump the project version"
+usage = '''
+arg "<level>" help="Version level (a/b/c)" default="c" {
+  choices "a" "b" "c"
+}
+'''
+run = "python3 scripts/bump_version.py ${usage_level?}"
+
+[tasks.commit]
+description = "Stage, append a transaction-log entry, and commit — in that order, one commit total"
+usage = '''
+flag "--message <message>" help="Override the auto-generated commit message"
+flag "--bumped <version>" help="Version that was just bumped"
+flag "--push" help="Push commit to remote"
+'''
+run = """
+set -e
+set --
+[ -n "${usage_message:-}" ] && set -- "$@" "--message=${usage_message}"
+[ -n "${usage_bumped:-}" ] && set -- "$@" "--bumped=${usage_bumped}"
+[ "${usage_push:-false}" = "true" ] && set -- "$@" "--push"
+python3 scripts/git_commit.py "$@"
+"""
+
+[tasks.restart]
+description = "Bump, commit, and restart the process-compose stack"
+usage = '''
+flag "--no-bump" help="Skip version bump"
+flag "--no-git" help="Skip git commit"
+flag "--message <message>" help="Override commit message"
+flag "--push" help="Push commit to remote"
+arg "<level>" help="Version level (a/b/c)" default="c" {
+  choices "a" "b" "c"
+}
+'''
+run = """
+set -e
+bumped_arg=""
+if [ "${usage_no_bump:-false}" != "true" ]; then
+  new_version=$(python3 scripts/bump_version.py "${usage_level:-c}" | tail -n 1)
+  bumped_arg="--bumped=${new_version}"
+fi
+
+set --
+[ -n "${usage_message:-}" ] && set -- "$@" "--message=${usage_message}"
+[ "${usage_push:-false}" = "true" ] && set -- "$@" "--push"
+[ -n "$bumped_arg" ] && set -- "$@" "$bumped_arg"
+
+if [ "${usage_no_git:-false}" != "true" ]; then
+  python3 scripts/git_commit.py "$@"
+fi
+
+if ss -tln | grep -qE ":<CONTROL_PORT>\\b"; then
+  mise run pc-down
+fi
+
+mise run pc-up
+"""
+
+[tasks.gh-new-issue]
+description = "Create a GitHub issue and add it to the project board"
+usage = '''
+flag "--title <title>" help="Issue title" required=#true
+flag "--body <body>" help="Issue body" default="*Created via mise gh-new-issue*"
+flag "--labels <labels>" help="Comma-separated labels" default="feature"
+'''
+run = """
+set -e
+python3 scripts/gh_issue.py \
+  --title "$usage_title" \
+  --body "$usage_body" \
+  --labels "$usage_labels"
+"""
+
+[tasks.post-comment]
+description = "Post a GitHub issue comment via --body-file with a mandatory self-check (ADR-004/ADR-005)"
+usage = '''
+flag "--issue <issue>" help="Issue number" required=#true
+flag "--file <file>" help="Path to a file containing the comment body" required=#true
+'''
+run = "python3 scripts/post_comment.py --issue \"$usage_issue\" --file \"$usage_file\""

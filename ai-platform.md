@@ -98,7 +98,12 @@ ai-platform/
 │   └── frontend-ui-golden-path.md  # Greg's variant — visual regression + smoke
 ├── templates/
 │   ├── lane1-handoff.md            # Lane 1 → 2 structured handoff template
-│   └── hitl-test-review.md         # Tech Lead HITL approval checklist
+│   ├── hitl-test-review.md         # Tech Lead HITL approval checklist
+│   └── golden-path/                # reference mise.toml + process-compose.yaml +
+│                                    # workflow doc for a project's service-lifecycle path
+├── tools/
+│   └── transaction-log/            # published, project-agnostic transaction-log +
+│                                    # diffstat glue (library + CLI)
 ├── agents/                         # universal, project-agnostic subagents only —
 │   │                                # see the note below before adding one
 │   ├── sticky-wicket.md            # reactive cross-lane thrashing circuit breaker (Fable)
