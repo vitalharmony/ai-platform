@@ -45,27 +45,33 @@ def main() -> int:
     status = execute_git(["git", "status", "--porcelain"], check=False)
     if not status:
         print("[GIT] Working tree clean. Nothing to commit.")
-        return 0
-
-    print("[GIT] Changes detected. Staging...")
-    execute_git(["git", "add", "."])
-
-    # If a previous invocation appended the log entry but then failed to
-    # commit (e.g. a hook rejection), re-running would append a second,
-    # duplicate entry before the retried commit succeeds. Skip the append
-    # when the newest entry already matches this exact commit message.
-    if newest_entry_header(LOG_PATH) == f"## {commit_msg}":
-        print("[TRANSACTION LOG] Entry for this commit already staged from a prior attempt — not duplicating")
+        # Real workflow: commit happens on a branch, then a fast-forward
+        # merge to main (no new commit) precedes publishing. --push must
+        # still run in that case — an empty tree here does NOT mean
+        # "nothing to push," it means "no NEW commit to make before
+        # pushing whatever's already merged." Only skip commit-only work.
+        if not args.push:
+            return 0
     else:
-        delta_summary = diffstat_summary(PROJECT_ROOT, cached=True)
-        if append_log_entry(LOG_PATH, commit_msg, delta_summary):
-            print("[TRANSACTION LOG] Appended entry for upcoming commit")
+        print("[GIT] Changes detected. Staging...")
+        execute_git(["git", "add", "."])
 
-    # Stage the transaction-log edit too
-    execute_git(["git", "add", "transaction-log.md"])
+        # If a previous invocation appended the log entry but then failed to
+        # commit (e.g. a hook rejection), re-running would append a second,
+        # duplicate entry before the retried commit succeeds. Skip the append
+        # when the newest entry already matches this exact commit message.
+        if newest_entry_header(LOG_PATH) == f"## {commit_msg}":
+            print("[TRANSACTION LOG] Entry for this commit already staged from a prior attempt — not duplicating")
+        else:
+            delta_summary = diffstat_summary(PROJECT_ROOT, cached=True)
+            if append_log_entry(LOG_PATH, commit_msg, delta_summary):
+                print("[TRANSACTION LOG] Appended entry for upcoming commit")
 
-    execute_git(["git", "commit", "-m", commit_msg])
-    print("[GIT] Successfully committed.")
+        # Stage the transaction-log edit too
+        execute_git(["git", "add", "transaction-log.md"])
+
+        execute_git(["git", "commit", "-m", commit_msg])
+        print("[GIT] Successfully committed.")
 
     if args.push:
         print("[GIT] Pushing to remote...")
