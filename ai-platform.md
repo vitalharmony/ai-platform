@@ -251,9 +251,13 @@ canonical "what gets worked on next" doc — it deliberately spans both
 `vitalharmony/hrse` and `vitalharmony/ai-platform` issues (Marc operates
 across both from the same working session, so a hrse-only or
 ai-platform-only priority list would miss real interdependencies). Kept in
-sync by HRSE2's `/sprint-plan` skill. As more projects come online, this
-may need to move to a platform-level location — not done yet since it's
-only ever covered two repos so far.
+sync by HRSE2's `/sprint-plan` skill, which as of 2026-07-13 also mirrors
+it onto matching `Priority`/`Sequence` fields on two GitHub Projects v2
+boards (vitalharmony project #1 for hrse, #3 for ai-platform) — the doc
+stays canonical (it carries the reasoning, the boards don't), the boards
+are derived views for anyone who prefers glancing at a kanban layout. As
+more projects come online, this may need to move to a platform-level
+location — not done yet since it's only ever covered two repos so far.
 
 ---
 

@@ -110,6 +110,17 @@ through `ADR-005` in this repo.
    Ke'nekted ever needs a lifecycle tool: the decision was "adopt mature
    OSS over building custom," which will likely be Marc's default answer
    for Ke'nekted's equivalent gap too.
+7. HRSE2 also built a cross-repo sequencing doc (`docs/PRIORITIES.md` in
+   that repo) plus a `/sprint-plan` skill to keep it and two GitHub
+   Projects v2 boards (vitalharmony project #1 and #3, one per repo) in
+   sync — the doc carries the "why," the boards mirror it via a `Priority`/
+   `Sequence` field pair. **This is scoped to `vitalharmony`, not
+   `kenekted-platform`** — per the security model above, its own board (if
+   Ke'nekted ever wants one) would need to live under Ke'nekted's own
+   GitHub org/account, kept in sync by an equivalent script using
+   Ke'nekted's own credentials. Worth adopting the same pattern once
+   Ke'nekted has enough open issues to need sequencing at all — not a
+   near-term gap.
 
 ## Setup Steps (Adjust Once the Above Is Known)
 

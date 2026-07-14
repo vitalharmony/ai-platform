@@ -60,13 +60,17 @@ surprised by them:
 5. **Don't just pull whatever `tech-debt`-labeled issue looks interesting —
    check `docs/PRIORITIES.md` first** (HRSE2 repo root). It's the canonical
    cross-repo (hrse + ai-platform) sequencing doc — what's actually next,
-   with the reasoning, and what's deliberately parked and why. **It is not
-   reflected on the GitHub Projects v2 board** — the board's Status column
-   doesn't carry priority ordering, so don't infer "next" from board
-   position. Kept current by Lane 1's `/sprint-plan` skill; if something
-   you're about to pick up isn't mentioned there, flag it to Marc rather
-   than assuming it's fine to start — the doc may just be missing it (real
-   drift), or it may be a deliberate cut you're about to undo.
+   with the reasoning, and what's deliberately parked and why. **As of
+   2026-07-13, both boards do mirror it** — vitalharmony project #1
+   ("CymaGraph Backlog," hrse) and project #3 ("ai-platform Backlog") each
+   carry a `Priority` (NOW/NEXT/LATER) and `Sequence` field kept in sync by
+   `/sprint-plan`'s `board_sync.py`. Still treat **the doc as canonical, the
+   board as a derived view** — the doc carries the *reasoning* for every
+   entry, the board's fields don't; if the two ever disagree
+   (`board_drift_check.py` catches this), the doc wins and the board gets
+   corrected, never the reverse. If something you're about to pick up isn't
+   mentioned in the doc, flag it to Marc rather than assuming it's fine to
+   start — it may be real drift, or a deliberate cut you're about to undo.
 
 ## Setup Steps
 
