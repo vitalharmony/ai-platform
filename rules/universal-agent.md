@@ -46,6 +46,40 @@ migration scripts in a project's designated scripts directory are exempt.
 - Any single-instance resource (DB driver, connection pool) is a module-level
   singleton owned by one file — no agent instantiates a second one elsewhere.
 
+### Passing sensitive real-world data between lanes
+
+Real business/personal data (negotiation figures, contact details, PII,
+anything that isn't a credential but still shouldn't become a permanent
+public-or-semi-public record) must never be pasted into a GitHub issue
+comment, PR description, or any other artifact that persists and is
+readable by every repo collaborator — even on a private repo, since
+collaborator access doesn't imply the data's own sensitivity clearance
+(a project's `hrse` repo, say, may have a collaborator who has no reason
+to see the operator's live salary-negotiation figures).
+
+Pattern, live-verified on HRSE2 (hrse#226's seed-import data, 2026-07-14):
+1. Write the sensitive data to a file under a project-local, gitignored
+   directory (e.g. `scripts/seed_data/`) — add the directory to
+   `.gitignore` explicitly if it isn't already covered, and verify with
+   `git check-ignore -v <path>` before trusting it.
+2. Post a comment on the relevant issue that names the **file path only**
+   — never the content — plus enough structural metadata (row count,
+   format, known open questions) for the next lane to use it without
+   re-deriving context. The comment is safe to keep permanently; the data
+   file is not committed, ever.
+3. The next lane (human or agent) reads the file directly from local disk.
+   This only works when both lanes share a filesystem (true for Lane
+   1/2/3 on a single operator's machine) — if lanes run on genuinely
+   separate machines, this pattern doesn't apply and a different
+   transfer mechanism is needed.
+
+This is a sibling rule to "no agent writes to a `.env`/secrets file"
+below, not the same rule: `.env` never gets agent-written because secrets
+management is deliberately human-only; sensitive *data* files, by
+contrast, are fine for an agent to write (it's not a credential), the
+constraint is purely about where the content is allowed to become durably
+visible.
+
 ## CLOUD-NATIVE & 12-FACTOR READINESS
 
 Target: every project survives a clean forklift to its cloud target.

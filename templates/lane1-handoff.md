@@ -68,7 +68,11 @@ ambiguity}
 
 **No secrets in this handoff.** Name the env var a step depends on, never
 its value — this handoff is posted as a permanent comment on the GitHub
-issue, a wider audience than a local file.
+issue, a wider audience than a local file. **Same applies to sensitive
+real-world data that isn't a credential** (negotiation figures, PII,
+contact details) — see `rules/universal-agent.md` § SECURITY → "Passing
+sensitive real-world data between lanes" for the gitignored-local-file +
+path-only-comment pattern.
 
 ### Test Cases (for Lane 3)
 1. After fixing, [action] must produce [Y] and must NOT produce [Z].
