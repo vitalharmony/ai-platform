@@ -1,4 +1,4 @@
-# ai-platform Transaction Log
+# harmonic-forge Transaction Log
 
 Auto-maintained by `mise run commit` (`scripts/git_commit.py` + `tools/transaction-log/`) — appends a delta summary in the same commit as the code change it describes (headline = verbatim commit message). Cleared on **push to main**, not a version bump — this repo has no running artifact to stamp, so push is its genuine "publish" event (see `mise.toml`'s header comment). Full history: `git log -p transaction-log.md`. Read this file at session start for recent context. Do not edit by hand.
 
@@ -6,7 +6,7 @@ Auto-maintained by `mise run commit` (`scripts/git_commit.py` + `tools/transacti
 ## docs: codify gitignored-local-file pattern for passing sensitive real-world data between lanes
 - [docs] Markdown-only commit — no code changes. Files: rules/universal-agent.md, templates/lane1-handoff.md
 
-## docs: ai-platform.md's repo-layout tree was missing tools/gh/, .githooks/, mise.toml, transaction-log.md
-- [docs] Markdown-only commit — no code changes. Files: ai-platform.md
+## docs: harmonic-forge.md's repo-layout tree was missing tools/gh/, .githooks/, mise.toml, transaction-log.md
+- [docs] Markdown-only commit — no code changes. Files: harmonic-forge.md
 
 <!-- TRANSACTION_LOG_END -->

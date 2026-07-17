@@ -1,7 +1,7 @@
 # 3-Lane Protocol (Agent-Readable)
 
 Condensed operational directives. For philosophy/rationale, see
-`ai-platform.md`. This file is what agents load — no narrative prose.
+`harmonic-forge.md`. This file is what agents load — no narrative prose.
 
 ```
 [GitHub Issue] → Dev pulls ticket → [Local 3-Lane Loop] → GitHub PR
@@ -132,7 +132,7 @@ trusted to follow.*
   direct, durable corrections to Lane 3's own behavior go, separate from the
   shared protocol/rule files above that steer all three lanes. Devin AA also
   writes to this file itself (not purely human-maintained) — check it, don't
-  assume the `ai-platform` rules are the only lever when Lane 3's behavior
+  assume the `harmonic-forge` rules are the only lever when Lane 3's behavior
   needs adjusting.
 - **Own skill file, per-project: `{project}/.devin/skills/lane3-gate/SKILL.md`**
   (repo-local, not `~/.config` like `AGENTS.md` above, and — as of 2026-07-10
@@ -141,7 +141,7 @@ trusted to follow.*
   constraint two sections below, drafted by Devin AA itself after diagnosing
   that prose rules alone weren't preventing it from rationalizing past them
   ("I found the fix and it was easy" / "the fix is obviously correct"). The
-  skill explicitly names `ai-platform/3-lane-protocol.md` and
+  skill explicitly names `harmonic-forge/3-lane-protocol.md` and
   `rules/testing-gate.md` as authoritative — it is the enforcement layer, not
   a second source of truth, and should be updated to match if the two ever
   drift. Cites the real incidents (`#176`, `#52`) that produced it. If this
@@ -695,7 +695,7 @@ not a subagent.
 
 | Role | Person | Responsibility |
 |---|---|---|
-| Platform owner | Marc | Owns `ai-platform`; sets golden paths; merges platform PRs |
+| Platform owner | Marc | Owns `harmonic-forge`; sets golden paths; merges platform PRs |
 | Feature delivery | Kyle (CymaGraph/HRSE2), Greg (Ke'nekted) | Consume golden paths; run the 3-lane loop locally; never edit platform rules directly |
 | Product demand | Shawn | Defines acceptance criteria on issues; approves shipped features |
 

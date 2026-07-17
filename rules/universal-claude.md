@@ -14,7 +14,7 @@ on every change and to keep Claude Code's context budget on architecture and
 verification rather than typing.
 
 **Exception:** platform-level tooling and documentation work explicitly
-scoped as such by the operator (e.g. building out `ai-platform` itself) may
+scoped as such by the operator (e.g. building out `harmonic-forge` itself) may
 be assigned directly to Claude Code as architect/coder/PM. This is an
 explicit, per-engagement exception — it does not default open. When in
 doubt, ask before writing to a project's application source tree.

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-ai-platform bootstrapper.
+harmonic-forge bootstrapper.
 
 Wires a project's .claude/rules/ and .claude/agents/ into this platform
 repo's universal rule/agent files via symlinks, so every project always
 reads the current platform rules/agents rather than a stale copy.
 
 Usage:
-    python3 ~/ai-platform/sync_rules.py --project /path/to/project
-    python3 ~/ai-platform/sync_rules.py --pull
+    python3 ~/harmonic-forge/sync_rules.py --project /path/to/project
+    python3 ~/harmonic-forge/sync_rules.py --pull
 """
 
 import argparse
@@ -28,11 +28,11 @@ UNIVERSAL_RULE_FILES = [
 
 
 def _universal_agent_files() -> list[str]:
-    """Auto-discover every agent in ai-platform/agents/.
+    """Auto-discover every agent in harmonic-forge/agents/.
 
-    No separate list to keep in sync: per ai-platform.md's own convention,
+    No separate list to keep in sync: per harmonic-forge.md's own convention,
     anything placed in agents/ is definitionally meant to be universal and
-    project-agnostic (see the note in ai-platform.md before adding one) —
+    project-agnostic (see the note in harmonic-forge.md before adding one) —
     unlike rules/, which mixes universal files with ones a project opts
     into individually.
     """
@@ -42,7 +42,7 @@ def _universal_agent_files() -> list[str]:
 
 
 def pull_platform() -> bool:
-    """Pulls the latest ai-platform rules via git."""
+    """Pulls the latest harmonic-forge rules via git."""
     print(f"[SYNC] Pulling latest platform rules in {PLATFORM_ROOT}...")
     result = subprocess.run(
         ["git", "-C", str(PLATFORM_ROOT), "pull", "--ff-only"],
@@ -123,14 +123,14 @@ def verify_links(project_root: Path) -> bool:
 
 def print_remaining_steps(project_root: Path) -> None:
     print("\n[REMAINING STEPS]")
-    print(f"  1. Confirm {project_root}/CLAUDE.md points to ai-platform/3-lane-protocol.md")
+    print(f"  1. Confirm {project_root}/CLAUDE.md points to harmonic-forge/3-lane-protocol.md")
     print(f"  2. Confirm {project_root}/.windsurfrules only carries project-specific overrides")
-    print("  3. Read ai-platform/3-lane-protocol.md before pulling a first ticket")
+    print("  3. Read harmonic-forge/3-lane-protocol.md before pulling a first ticket")
     print("  4. Re-run with --pull whenever platform rules or agents change")
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="ai-platform sync bootstrapper")
+    parser = argparse.ArgumentParser(description="harmonic-forge sync bootstrapper")
     parser.add_argument("--project", type=str, help="Path to the project root to link")
     parser.add_argument(
         "--pull", action="store_true", help="Pull latest platform rules via git"
@@ -160,7 +160,7 @@ def main() -> int:
             print("[ERROR] Symlink verification failed.", file=sys.stderr)
             return 1
 
-        print(f"\n[OK] {project_root} is linked to ai-platform rules and agents.")
+        print(f"\n[OK] {project_root} is linked to harmonic-forge rules and agents.")
         print_remaining_steps(project_root)
 
     return 0

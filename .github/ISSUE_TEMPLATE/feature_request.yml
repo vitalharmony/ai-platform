@@ -6,11 +6,11 @@ body:
     id: project
     attributes:
       label: Which project(s) would this affect?
-      description: ai-platform's rules/templates are consumed by multiple projects — this helps assess blast radius.
+      description: harmonic-forge's rules/templates are consumed by multiple projects — this helps assess blast radius.
       options:
         - HRSE2 / CymaGraph
         - Ke'nekted
-        - ai-platform itself (sync_rules.py, templates, etc.)
+        - harmonic-forge itself (sync_rules.py, templates, etc.)
         - All / platform-wide
         - Other / not sure
     validations:

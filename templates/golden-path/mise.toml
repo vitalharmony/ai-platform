@@ -1,4 +1,4 @@
-# Golden-path mise.toml reference template (ai-platform#34).
+# Golden-path mise.toml reference template (harmonic-forge#34).
 #
 # Extracted from HRSE2's live, battle-tested config after it proved itself
 # across the hrse#224 cutover epic. This is a STRUCTURE template, not a
@@ -8,7 +8,7 @@
 # tools/transaction-log/ in this repo is the one piece that's actually
 # published as reusable code — scripts/git_commit.py should call into it,
 # not reimplement it). gh_issue.py/post_comment.py are NOT project-specific
-# anymore (ai-platform#53) — call tools/gh/ directly, supplying only the
+# anymore (harmonic-forge#53) — call tools/gh/ directly, supplying only the
 # repo/board slug via [env] below.
 #
 # Every task here exists because of a specific incident during HRSE2's
@@ -133,7 +133,7 @@ flag "--labels <labels>" help="Comma-separated labels" default="feature"
 '''
 run = """
 set -e
-python3 ~/ai-platform/tools/gh/gh_issue.py \
+python3 ~/harmonic-forge/tools/gh/gh_issue.py \
   --repo "$GH_REPO" \
   --title "$usage_title" \
   --body "$usage_body" \
@@ -146,4 +146,4 @@ usage = '''
 flag "--issue <issue>" help="Issue number" required=#true
 flag "--file <file>" help="Path to a file containing the comment body" required=#true
 '''
-run = "python3 ~/ai-platform/tools/gh/post_comment.py --repo \"$GH_REPO\" --issue \"$usage_issue\" --file \"$usage_file\""
+run = "python3 ~/harmonic-forge/tools/gh/post_comment.py --repo \"$GH_REPO\" --issue \"$usage_issue\" --file \"$usage_file\""

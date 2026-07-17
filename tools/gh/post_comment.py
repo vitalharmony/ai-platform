@@ -7,9 +7,9 @@ doesn't depend on a lane remembering it at the moment of a routine action. This
 exact failure class recurred three times on HRSE2 (#234, #235, #236) despite
 the rule being written down twice.
 
-Generalized from HRSE2's original `scripts/post_comment.py` (ai-platform#53)
+Generalized from HRSE2's original `scripts/post_comment.py` (harmonic-forge#53)
 after a hardcoded `REPO = "vitalharmony/hrse"` default caused a real mis-post:
-this tool was invoked for an ai-platform issue out of HRSE2 habit and silently
+this tool was invoked for an harmonic-forge issue out of HRSE2 habit and silently
 posted to an unrelated HRSE2 issue instead. Fix: `--repo` is now required,
 with no default, and a banner prints the resolved target before acting so a
 misconfigured `--repo` is visible immediately, not discovered after the fact.

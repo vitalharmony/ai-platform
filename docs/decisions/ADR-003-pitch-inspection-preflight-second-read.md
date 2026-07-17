@@ -104,7 +104,7 @@ design-level failure mode actually lives.
 - `pitch-inspection` symlinked into HRSE2's `.claude/agents/` alongside
   `sticky-wicket` and `product-strategy`, same manual-symlink pattern
   (proper distribution via `sync_rules.py` is tracked separately in
-  ai-platform#47 — not blocking).
+  harmonic-forge#47 — not blocking).
 - This resolves ADR-002's open question for the design-time case
   specifically. It does not extend to routine implementation work with an
   obvious design — that remains Lane 1's ordinary job, unreviewed by this

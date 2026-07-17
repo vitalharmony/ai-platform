@@ -6,7 +6,7 @@
 **Extends:** ADR-004's Plan-First Implementation mechanism
 **Amends:** `3-lane-protocol.md` (§ HITL Gate Language, § Plan-First
 Implementation), `templates/lane1-handoff.md` (Implementation Spec section)
-**Incident record:** vitalharmony/ai-platform#50, vitalharmony/hrse#236
+**Incident record:** vitalharmony/harmonic-forge#50, vitalharmony/hrse#236
 
 ## Context
 
@@ -96,7 +96,7 @@ Lane 2's claims). Reverting working, correctly-designed code to re-run a
 process ceremony would be waste for its own sake. Instead: `pitch-inspection`
 Mode B ran as a post-hoc audit against the actual diff (see #236 for the
 result), and the gate-skip itself was filed as its own incident
-(vitalharmony/ai-platform#50) per the standing
+(vitalharmony/harmonic-forge#50) per the standing
 rule-violations-get-filed discipline, rather than only being mentioned in
 a gate comment and lost when the issue closes.
 

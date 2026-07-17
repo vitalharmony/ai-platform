@@ -1,8 +1,8 @@
 # tools/gh/ — repo-agnostic GitHub issue/comment helpers
 
-Two `gh`-CLI wrappers, extracted from HRSE2's originals (ai-platform#53)
+Two `gh`-CLI wrappers, extracted from HRSE2's originals (harmonic-forge#53)
 after a hardcoded repo default caused a real mis-post: `mise run
-post-comment` was run for an `ai-platform` issue out of HRSE2 habit, and —
+post-comment` was run for an `harmonic-forge` issue out of HRSE2 habit, and —
 because the script defaulted to `REPO = "vitalharmony/hrse"` — silently
 posted the comment to an unrelated HRSE2 issue instead. Caught and fixed
 immediately, but it's the same failure shape as ADR-004/005 already named
@@ -28,7 +28,7 @@ default, and print a banner naming the resolved target before acting.
   project board yet, and this tool shouldn't force one into existing.
   ```bash
   GH_PROJECT_OWNER=vitalharmony GH_PROJECT_NUMBER=3 \
-    python3 gh_issue.py --repo vitalharmony/ai-platform --title "..." --labels "tech-debt"
+    python3 gh_issue.py --repo vitalharmony/harmonic-forge --title "..." --labels "tech-debt"
   ```
 
 Both are importable (`from post_comment import post_comment`, `from
@@ -48,10 +48,10 @@ GH_PROJECT_OWNER = "vitalharmony"
 GH_PROJECT_NUMBER = "1"
 
 [tasks.gh-new-issue]
-run = 'python3 ~/ai-platform/tools/gh/gh_issue.py --repo "$GH_REPO" --title "$usage_title" --body "$usage_body" --labels "$usage_labels"'
+run = 'python3 ~/harmonic-forge/tools/gh/gh_issue.py --repo "$GH_REPO" --title "$usage_title" --body "$usage_body" --labels "$usage_labels"'
 
 [tasks.post-comment]
-run = 'python3 ~/ai-platform/tools/gh/post_comment.py --repo "$GH_REPO" --issue "$usage_issue" --file "$usage_file"'
+run = 'python3 ~/harmonic-forge/tools/gh/post_comment.py --repo "$GH_REPO" --issue "$usage_issue" --file "$usage_file"'
 ```
 
 A project without a board simply omits `GH_PROJECT_OWNER`/

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Stage, append a transaction-log entry, and commit — in that order, one commit total.
 
-ai-platform's own commit task (ai-platform#54), scoped down from HRSE2's
+harmonic-forge's own commit task (harmonic-forge#54), scoped down from HRSE2's
 version: no version-bump tier in the message hierarchy, because this repo
 has no running artifact to stamp (see mise.toml's header comment for the
 full reasoning). Two-tier hierarchy instead of three: explicit override,
@@ -40,7 +40,7 @@ def main() -> int:
     parser.add_argument("--push", action="store_true", help="Push commit to remote")
     args = parser.parse_args()
 
-    commit_msg = args.message or "docs: Update ai-platform"
+    commit_msg = args.message or "docs: Update harmonic-forge"
 
     status = execute_git(["git", "status", "--porcelain"], check=False)
     if not status:

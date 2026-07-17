@@ -1,4 +1,4 @@
-# Golden-path process-compose.yaml reference template (ai-platform#34).
+# Golden-path process-compose.yaml reference template (harmonic-forge#34).
 # Extracted from HRSE2's live config. Replace service names, commands,
 # ports, and health-check paths for your project; the shape (readiness
 # probe + restart policy) is what matters.

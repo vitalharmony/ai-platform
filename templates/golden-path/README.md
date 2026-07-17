@@ -1,4 +1,4 @@
-# Golden-path service-lifecycle workflow (ai-platform#34)
+# Golden-path service-lifecycle workflow (harmonic-forge#34)
 
 The platform's answer to "how does a project restart its services, run its
 verification gate, bump its version, and commit — in one consistent,
@@ -85,9 +85,9 @@ reading why is how the incident recurs.
   moment isn't sufficient on its own; make the compliant path the only
   easy one to invoke instead.
 - **`gh-new-issue`/`post-comment` call `tools/gh/` directly, not a
-  project-local script copy** (ai-platform#53). The original per-project
+  project-local script copy** (harmonic-forge#53). The original per-project
   scripts hardcoded their repo slug, which caused a real mis-post — this
-  tool ran for an `ai-platform` issue out of HRSE2 habit and silently
+  tool ran for an `harmonic-forge` issue out of HRSE2 habit and silently
   posted to the wrong repo because of the hardcoded default. `tools/gh/`
   requires `--repo` explicitly (no default) and prints a banner naming the
   resolved target before acting; a project supplies its own slug once via
@@ -117,12 +117,12 @@ db-heal tasks are CymaGraph-specific and not part of this golden path).
 ## The docs/tooling-repo subset (no running artifact)
 
 Not every project has a service to restart or an artifact to version-stamp.
-`ai-platform`'s own `mise.toml` (repo root) is the sanctioned pattern for
-that case (ai-platform#54) — resolved via `product-strategy`, not just
+`harmonic-forge`'s own `mise.toml` (repo root) is the sanctioned pattern for
+that case (harmonic-forge#54) — resolved via `product-strategy`, not just
 deferred: `check` + `commit` + `gh-new-issue` + `post-comment` only, no
 `bump`/`restart`/`pc-up`/`pc-down`. A version bump would gate nothing here
 — consumers pull this repo via `sync_rules.py --pull`, so the git SHA
-already **is** the version, and `ai-platform.md`'s own "Draft v0.2" header
+already **is** the version, and `harmonic-forge.md`'s own "Draft v0.2" header
 is a hand-maintained spec-status marker deliberately bumped at real
 milestones, not automated per-commit. Without a bump to hang transaction-
 log rotation on, `commit --push` clears the log instead — push is this

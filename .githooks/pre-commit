@@ -3,7 +3,7 @@
 # written process instructions have both, separately, failed to stop Lane 2
 # from committing straight to main (HRSE2 #236, twice in one day). This is
 # the mechanical backstop that doesn't depend on any lane remembering a rule.
-# Ported to ai-platform via ai-platform#52 — same gap class as #50.
+# Ported to harmonic-forge via harmonic-forge#52 — same gap class as #50.
 set -euo pipefail
 
 branch="$(git rev-parse --abbrev-ref HEAD)"

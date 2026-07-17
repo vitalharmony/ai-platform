@@ -1,6 +1,6 @@
 # Onboarding Addendum — Kyle (CymaGraph / HRSE2)
 
-Read `../3-lane-protocol.md` and `../ai-platform.md` first. This file covers
+Read `../3-lane-protocol.md` and `../harmonic-forge.md` first. This file covers
 only what's different for HRSE2 specifically, or still pending from your
 earlier onboarding.
 
@@ -46,7 +46,7 @@ surprised by them:
    made while on `main` — work on a branch, always (see hrse#243).
 2. **Neo4j/Cypher rules are HRSE2-local, not platform-universal.**
    `.claude/rules/cypher.md` stays as an HRSE2-specific file — it is not
-   symlinked from `ai-platform` because most other Vital Harmony projects
+   symlinked from `harmonic-forge` because most other Vital Harmony projects
    don't use Neo4j. Parameterized-Cypher discipline still applies, it's just
    documented locally instead of centrally.
 3. **The 300-line cap and LLM-gateway pattern are real and enforced** —
@@ -59,10 +59,10 @@ surprised by them:
    by Lane 3 before merge.
 5. **Don't just pull whatever `tech-debt`-labeled issue looks interesting —
    check `docs/PRIORITIES.md` first** (HRSE2 repo root). It's the canonical
-   cross-repo (hrse + ai-platform) sequencing doc — what's actually next,
+   cross-repo (hrse + harmonic-forge) sequencing doc — what's actually next,
    with the reasoning, and what's deliberately parked and why. **As of
    2026-07-13, both boards do mirror it** — vitalharmony project #1
-   ("CymaGraph Backlog," hrse) and project #3 ("ai-platform Backlog") each
+   ("CymaGraph Backlog," hrse) and project #3 ("harmonic-forge Backlog") each
    carry a `Priority` (NOW/NEXT/LATER) and `Sequence` field kept in sync by
    `/sprint-plan`'s `board_sync.py`. Still treat **the doc as canonical, the
    board as a derived view** — the doc carries the *reasoning* for every
@@ -74,16 +74,16 @@ surprised by them:
 
 ## Setup Steps
 
-1. `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`
+1. `git clone https://github.com/vitalharmony/harmonic-forge.git ~/harmonic-forge/`
 2. Clone/pull the HRSE2 repo. `.claude/rules/backend-python.md` and
    `frontend-typescript.md` are now symlinks (issue #6 migration landed) —
    **but right after your clone, they'll point at Marc's machine**
-   (`/home/mmangus/ai-platform/...`), because that's the absolute path baked
+   (`/home/mmangus/harmonic-forge/...`), because that's the absolute path baked
    into the symlink when it was committed. This is expected, not broken.
 3. Immediately run, from the HRSE2 repo root:
-   `python3 ~/ai-platform/sync_rules.py --project .`
+   `python3 ~/harmonic-forge/sync_rules.py --project .`
    This detects the symlinks point somewhere other than your own
-   `~/ai-platform` checkout and relinks them to your machine. Confirm with:
+   `~/harmonic-forge` checkout and relinks them to your machine. Confirm with:
    `readlink .claude/rules/backend-python.md` — it should print a path under
    *your* home directory, not `/home/mmangus/...`.
 4. Follow `setup/first_time_setup.md` in the HRSE2 repo for environment
@@ -168,7 +168,7 @@ what changes your day-to-day work as Lane 2:
    for both messages, not just the first. Implementing before that
    follow-up spec exists is a filed protocol violation, not a shortcut
    (see `rules/universal-agent.md` § STANDING-RULE VIOLATIONS GET FILED;
-   the #236 incident is ai-platform#50).
+   the #236 incident is harmonic-forge#50).
 4. **Tooling Exception:** dev/test tooling issues (never application code,
    never shipped, labeled `infrastructure`/`tech-debt`) can skip the full
    3-lane loop — single implementer, one human-reviewed pass, no per-round

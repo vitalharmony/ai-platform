@@ -3,7 +3,7 @@
 **Owner:** Marc Mangus / Vital Harmony LLC
 **Status:** Draft v0.2 — core protocol content finalized; tooling (`sync_rules.py`) and per-project rollout in progress
 **Applies to:** All Vital Harmony projects (CymaGraph/HRSE2, Ke'nekted, LeasePAL, OWE Studio)
-**Platform repo:** https://github.com/vitalharmony/ai-platform (public)
+**Platform repo:** https://github.com/vitalharmony/harmonic-forge (public)
 
 ---
 
@@ -81,14 +81,14 @@ auditable record over single-session disposability. See
 
 ## 3. Repository Structure
 
-### Platform Repo (`vitalharmony/ai-platform`, public)
+### Platform Repo (`vitalharmony/harmonic-forge`, public)
 
 ```
-ai-platform/
-├── ai-platform.md                  # this document
+harmonic-forge/
+├── harmonic-forge.md                  # this document
 ├── README.md                       # repo landing page
 ├── 3-lane-protocol.md              # condensed operational protocol (agent-readable)
-├── mise.toml                       # this repo's OWN tooling (ai-platform#54) — check/commit/
+├── mise.toml                       # this repo's OWN tooling (harmonic-forge#54) — check/commit/
 │                                    # gh-new-issue/post-comment only, deliberately no
 │                                    # bump/restart (no running artifact to stamp — see
 │                                    # templates/golden-path/README.md's "docs/tooling-repo
@@ -99,7 +99,7 @@ ai-platform/
 ├── transaction-log.md              # this repo's own transaction log — cleared on push to
 │                                    # main (no version bump exists to hang rotation on)
 ├── .githooks/
-│   └── pre-commit                  # rejects direct commits to main (ai-platform#52); every
+│   └── pre-commit                  # rejects direct commits to main (harmonic-forge#52); every
 │                                    # clone must run `git config core.hooksPath .githooks`
 ├── .gitignore
 ├── prompts/                        # Gemini Gem / external-tool prompt templates
@@ -118,7 +118,7 @@ ai-platform/
 ├── tools/
 │   ├── transaction-log/            # published, project-agnostic transaction-log +
 │   │                                # diffstat glue (library + CLI)
-│   └── gh/                         # published, repo-agnostic GitHub helpers (ai-platform#53)
+│   └── gh/                         # published, repo-agnostic GitHub helpers (harmonic-forge#53)
 │                                    # — post_comment.py (self-checking --body-file post) +
 │                                    # gh_issue.py (create + optional board-add); --repo is
 │                                    # required with no default on both (see README.md there
@@ -145,7 +145,7 @@ project name, no project-specific domain rules baked in) belong here.
 this canonical pattern existed) with CymaGraph specifics hardcoded
 throughout (explicit "CymaGraph (HRSE2)" framing, a sovereignty/privacy
 filter tied to CymaGraph's own BYOC/BYOK positioning). Generalized
-2026-07-13 (ai-platform#48): the project name and its positioning/ethical
+2026-07-13 (harmonic-forge#48): the project name and its positioning/ethical
 commitments are now supplied by the invoking session's prompt instead of
 hardcoded — the agent reads whatever the project has actually committed to
 (its own README/ADRs) rather than assuming CymaGraph's stance applies
@@ -156,14 +156,14 @@ where its positioning commitments (if any) are documented.
 
 ```
 {project}/
-├── CLAUDE.md                       # project-specific overrides + pointer to ai-platform
+├── CLAUDE.md                       # project-specific overrides + pointer to harmonic-forge
 ├── .windsurfrules                  # project-specific overrides
 ├── .claude/rules/                  # path-scoped rules (fire on matching files)
-│   ├── backend-python.md           # → symlink to ai-platform/rules/backend-python.md
-│   └── frontend-typescript.md      # → symlink to ai-platform/rules/frontend-typescript.md
+│   ├── backend-python.md           # → symlink to harmonic-forge/rules/backend-python.md
+│   └── frontend-typescript.md      # → symlink to harmonic-forge/rules/frontend-typescript.md
 ├── .claude/agents/                 # universal subagents, symlinked by sync_rules.py
-│   ├── sticky-wicket.md            # → ai-platform/agents/sticky-wicket.md
-│   └── pitch-inspection.md         # → ai-platform/agents/pitch-inspection.md
+│   ├── sticky-wicket.md            # → harmonic-forge/agents/sticky-wicket.md
+│   └── pitch-inspection.md         # → harmonic-forge/agents/pitch-inspection.md
 └── (project may keep additional local-only rule/agent files, e.g. a
     Cypher/Neo4j addendum or a project-specific strategy subagent, that are
     NOT part of the platform sync because they don't apply universally)
@@ -171,8 +171,8 @@ where its positioning commitments (if any) are documented.
 
 **Override precedence (lowest → highest):**
 ```
-ai-platform/rules/universal-*.md
-  → ai-platform/rules/{language}.md
+harmonic-forge/rules/universal-*.md
+  → harmonic-forge/rules/{language}.md
     → {project}/.windsurfrules (project overrides)
       → {project}/CLAUDE.md (session-specific context)
 ```
@@ -185,10 +185,10 @@ ai-platform/rules/universal-*.md
 machine into the platform, and again whenever platform rules change.
 
 **What it does:**
-1. Clones (or pulls) `vitalharmony/ai-platform` into `~/ai-platform/`.
+1. Clones (or pulls) `vitalharmony/harmonic-forge` into `~/harmonic-forge/`.
 2. Creates symlinks from the project's `.claude/rules/` to the platform's
    universal rule files, **and** from `.claude/agents/` to every
-   auto-discovered agent in `ai-platform/agents/` (no separate list to
+   auto-discovered agent in `harmonic-forge/agents/` (no separate list to
    maintain — anything placed in `agents/` is definitionally universal,
    see the `agents/` note above).
 3. Verifies symlink integrity (both rules and agents) and reports any
@@ -199,17 +199,17 @@ machine into the platform, and again whenever platform rules change.
 **Usage:**
 ```bash
 # One-time setup (from any project root)
-python3 ~/ai-platform/sync_rules.py --project .
+python3 ~/harmonic-forge/sync_rules.py --project .
 
 # Pull latest platform rules (run at session start or after platform updates)
-python3 ~/ai-platform/sync_rules.py --pull
+python3 ~/harmonic-forge/sync_rules.py --pull
 ```
 
 **Platform:** macOS and Linux. Symlinks work natively on both. Windows is
 not currently supported — use WSL if needed.
 
 **Branch protection (required, not automated by the bootstrapper):** this
-repo has a `.githooks/pre-commit` hook (added via ai-platform#52) that
+repo has a `.githooks/pre-commit` hook (added via harmonic-forge#52) that
 rejects any commit made while on `main`. It is **not wired up by default**
 — every clone must run this once:
 ```bash
@@ -224,13 +224,13 @@ Without it, nothing stops a direct commit to `main` (this bit HRSE2 on
 
 | Role | Person(s) | Responsibility |
 |---|---|---|
-| Platform owner | Marc | Owns `ai-platform`; sets golden paths; reviews platform PRs |
+| Platform owner | Marc | Owns `harmonic-forge`; sets golden paths; reviews platform PRs |
 | Feature delivery | Kyle (CymaGraph/HRSE2), Greg (Ke'nekted) | Consume golden paths; deliver against backlog; never modify platform rules directly |
 | Product demand | Shawn | Defines acceptance criteria on issues; approves shipped features |
 
 **Platform change policy:** only the Platform Team (Marc) merges PRs into
-`ai-platform`. Stream-aligned developers open issues or PRs against
-`ai-platform` to propose changes — they never push directly.
+`harmonic-forge`. Stream-aligned developers open issues or PRs against
+`harmonic-forge` to propose changes — they never push directly.
 
 **Ajit / multi-agent extension:** a possible future Lane 3 plugin interface
 for a custom multi-agent setup is tracked separately (issue #8) and is
@@ -241,11 +241,11 @@ the core protocol depends on it.
 
 ## 6. Onboarding a New Developer
 
-1. `ai-platform` is public — clone it directly, no invite needed:
-   `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`.
+1. `harmonic-forge` is public — clone it directly, no invite needed:
+   `git clone https://github.com/vitalharmony/harmonic-forge.git ~/harmonic-forge/`.
 2. Get collaborator access to your own project's repo (this is per-project,
    not per-platform — see §7 and the security model below).
-3. Clone the project repo and run: `python3 ~/ai-platform/sync_rules.py --project .`.
+3. Clone the project repo and run: `python3 ~/harmonic-forge/sync_rules.py --project .`.
 4. Follow the project's `setup/first_time_setup.md` for environment setup.
 5. Read `3-lane-protocol.md` before pulling a first ticket.
 6. Pull a `tech-debt`-labeled issue as a first ticket (lowest stakes, real
@@ -257,7 +257,7 @@ projects — `vitalharmony`-authenticated tooling never touches
 `kenekted-platform` (or any other client repo), and vice versa. Project-level
 tools (Lane 2/3 agents, `gh` CLI) resolve their GitHub token from that
 project's own gitignored env file, never from a different project's token or
-a machine-global `gh auth login` session. `ai-platform` being public is the
+a machine-global `gh auth login` session. `harmonic-forge` being public is the
 exception that makes this work cleanly — it's the one thing every project
 reads without needing any credential at all.
 
@@ -277,12 +277,12 @@ project-specific addenda.
 
 **Cross-project sequencing:** `docs/PRIORITIES.md` in the `hrse` repo is the
 canonical "what gets worked on next" doc — it deliberately spans both
-`vitalharmony/hrse` and `vitalharmony/ai-platform` issues (Marc operates
+`vitalharmony/hrse` and `vitalharmony/harmonic-forge` issues (Marc operates
 across both from the same working session, so a hrse-only or
-ai-platform-only priority list would miss real interdependencies). Kept in
+harmonic-forge-only priority list would miss real interdependencies). Kept in
 sync by HRSE2's `/sprint-plan` skill, which as of 2026-07-13 also mirrors
 it onto matching `Priority`/`Sequence` fields on two GitHub Projects v2
-boards (vitalharmony project #1 for hrse, #3 for ai-platform) — the doc
+boards (vitalharmony project #1 for hrse, #3 for harmonic-forge) — the doc
 stays canonical (it carries the reasoning, the boards don't), the boards
 are derived views for anyone who prefers glancing at a kanban layout. As
 more projects come online, this may need to move to a platform-level

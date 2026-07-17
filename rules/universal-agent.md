@@ -5,8 +5,8 @@ Devin Autonomous Agent) on every Vital Harmony project. Project-level
 `.windsurfrules` may add constraints but may not weaken these. Precedence:
 
 ```
-ai-platform/rules/universal-*.md
-  → ai-platform/rules/{language}.md
+harmonic-forge/rules/universal-*.md
+  → harmonic-forge/rules/{language}.md
     → {project}/.windsurfrules  (project overrides)
       → {project}/CLAUDE.md     (session-specific context)
 ```
@@ -218,12 +218,12 @@ artifact of the legacy of when I started before the 3-lane protocol, what
 Cascade was building monoliths. I'm ok with dumping it completely." Known,
 accepted gap: this doesn't catch slow drift in a file nobody happens to
 touch again after crossing a threshold — a lower-value case better solved
-by future codebase-wide pattern detection (see the `ai-platform` Epic #11
+by future codebase-wide pattern detection (see the `harmonic-forge` Epic #11
 knowledge-graph work) than a manual periodic sweep.
 
 ## MEMORY-ENTRY STANDARD (ALL AGENTS, ALL MEMORY SURFACES)
 
-A durable memory entry — a rule addition to any `ai-platform` doc, an agent
+A durable memory entry — a rule addition to any `harmonic-forge` doc, an agent
 memory file, or a Lane 3 `AGENTS.md` self-correction — earns its place by
 completing the five-rung ladder, not stopping partway:
 

@@ -72,7 +72,7 @@ glue scripts published from this repo, invoked as mise tasks:
 4. **Onboarding bonus.** mise also manages tool installation itself
    (pinned versions of node, python, process-compose, doctl, ...): one
    `mise install` in a fresh clone bootstraps a developer — the
-   self-service story `ai-platform.md` §4 aims at.
+   self-service story `harmonic-forge.md` §4 aims at.
 5. **Better engineering than ours in places.** process-compose supervises
    its own child processes, which solves `hrse_manager.py`'s "browser
    safety" problem (kill only the listener on a port) more soundly than

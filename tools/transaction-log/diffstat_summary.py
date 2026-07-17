@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Deterministic, LLM-free delta summary from a git diffstat (ai-platform#40).
+"""Deterministic, LLM-free delta summary from a git diffstat (harmonic-forge#40).
 
 git diff --stat is the only summarization path — no LLM call, no provider
 abstraction. Evidence for dropping the LLM path entirely (not just making
 it optional): HRSE2's real transaction-log.md history showed a ~25% hard
 failure rate on a local 2B model, each failure silently falling back to
-this exact diffstat path anyway. See ai-platform ADR (referenced in this
+this exact diffstat path anyway. See harmonic-forge ADR (referenced in this
 tool's own issue) for the full decision record.
 
 Guards preserved from the original hrse_manager.py implementation:

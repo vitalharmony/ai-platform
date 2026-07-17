@@ -2,7 +2,7 @@
 
 A per-commit, in-flight context primer for agents — not a permanent
 changelog, not a replacement for `git log`. Extracted from HRSE2's
-implementation (ai-platform#40) after the pattern proved itself live across
+implementation (harmonic-forge#40) after the pattern proved itself live across
 the hrse#224 cutover epic (~50+ real commits).
 
 ## Why this exists

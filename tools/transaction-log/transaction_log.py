@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""transaction-log.md helpers — generic, project-agnostic (ai-platform#40).
+"""transaction-log.md helpers — generic, project-agnostic (harmonic-forge#40).
 
 Extracted from HRSE2's implementation (scripts/transaction_log.py,
 scripts/git_commit.py) after it proved itself live across the hrse#224

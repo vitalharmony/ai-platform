@@ -1,4 +1,4 @@
-# ai-platform's own service-lifecycle-adjacent tooling (ai-platform#54).
+# harmonic-forge's own service-lifecycle-adjacent tooling (harmonic-forge#54).
 #
 # This is the docs/tooling-repo SUBSET of the golden-path pattern
 # (templates/golden-path/mise.toml) — check + commit + gh tasks only.
@@ -7,7 +7,7 @@
 #     via `sync_rules.py --pull`, so the git SHA already IS the version —
 #     a per-commit VERSION file would gate nothing the SHA doesn't.
 #   - restart: no service exists. This is a docs/rules/tooling repo.
-# ai-platform.md's "Draft v0.2" header is a hand-maintained spec-status
+# harmonic-forge.md's "Draft v0.2" header is a hand-maintained spec-status
 # marker, bumped deliberately at real milestones — not automated here,
 # on purpose (automating it per-commit would destroy its meaning).
 #
@@ -20,7 +20,7 @@
 python = "3.13.13"
 
 [env]
-GH_REPO = "vitalharmony/ai-platform"
+GH_REPO = "vitalharmony/harmonic-forge"
 GH_PROJECT_OWNER = "vitalharmony"
 GH_PROJECT_NUMBER = "3"
 
@@ -48,7 +48,7 @@ python3 scripts/git_commit.py "$@"
 """
 
 [tasks.gh-new-issue]
-description = "Create a GitHub issue and add it to the ai-platform Backlog board (tools/gh/gh_issue.py)"
+description = "Create a GitHub issue and add it to the harmonic-forge Backlog board (tools/gh/gh_issue.py)"
 usage = '''
 flag "--title <title>" help="Issue title" required=#true
 flag "--body <body>" help="Issue body" default="*Created via mise gh-new-issue*"

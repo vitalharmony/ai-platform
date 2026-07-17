@@ -1,4 +1,4 @@
-# Operator Diffs — Where HRSE2 Practice Deviates From `ai-platform.md`
+# Operator Diffs — Where HRSE2 Practice Deviates From `harmonic-forge.md`
 
 Written for Marc, not for Kyle/Greg. These are gaps between the aspirational
 platform spec and what's actually true on HRSE2 today. Some need a decision;
@@ -52,9 +52,9 @@ confirmed via a live restart (lint/build/mypy gate + `db_connected: true`).
 
 **Known portability quirk, by design, not a bug:** the committed symlinks
 carry the absolute path from whichever machine created them (mine —
-`/home/mmangus/ai-platform/...`). Every other developer must run
+`/home/mmangus/harmonic-forge/...`). Every other developer must run
 `sync_rules.py --project .` right after cloning/pulling to relink them to
-their own machine's `~/ai-platform` checkout — the script already detects
+their own machine's `~/harmonic-forge` checkout — the script already detects
 and fixes a mismatched target automatically. This is called out explicitly
 in `docs/onboarding-kyle.md` and should be repeated in Greg's doc once it's
 made concrete.
@@ -65,7 +65,7 @@ Earlier in troubleshooting this session, Claude Code incorrectly floated a
 "Devin Cloud vs. Devin Local" distinction for Lane 3, reasoning that an
 isolated remote VM would lack `.env`/`GH_PAT` access. You corrected this:
 Devin AA was always intended to be local, and local `gh` CLI access already
-works. The platform doc (`ai-platform.md` §2) states this explicitly now so
+works. The platform doc (`harmonic-forge.md` §2) states this explicitly now so
 it doesn't get re-litigated. No action needed — just don't let a future
 session reintroduce the cloud framing.
 
@@ -88,5 +88,5 @@ equivalent gap too.
 - Approve or amend the coverage-gate gap (#1) before treating
   `rules/testing-gate.md` as binding on HRSE2.
 - Confirm whether Ke'nekted/LeasePAL/OWE Studio repos exist yet and where —
-  the project registry in `ai-platform.md` §7 is `TBD` for all three, which
+  the project registry in `harmonic-forge.md` §7 is `TBD` for all three, which
   blocks writing anything concrete for Greg beyond the placeholder doc.

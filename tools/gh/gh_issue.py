@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a GitHub issue and, if a project board is configured, add it there.
 
-Generalized from HRSE2's original `scripts/gh_issue.py` (ai-platform#53),
+Generalized from HRSE2's original `scripts/gh_issue.py` (harmonic-forge#53),
 which hardcoded `GH_REPO`/`PROJECT_OWNER`/`PROJECT_NUMBER` for
 vitalharmony/hrse. `--repo` is now required with no default (same fix as
 `post_comment.py`, same incident class as #50). Board owner/number are

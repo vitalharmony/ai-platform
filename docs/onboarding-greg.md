@@ -1,6 +1,6 @@
 # Onboarding Addendum — Greg (Ke'nekted)
 
-Read `../3-lane-protocol.md` and `../ai-platform.md` first. Repo:
+Read `../3-lane-protocol.md` and `../harmonic-forge.md` first. Repo:
 https://github.com/harmonicarchitect/kenekted-platform (private, owned under
 `marc@kenekted.ai` — see the security model below before assuming anything
 about cross-repo access). Beyond the repo location, its stack and existing
@@ -17,7 +17,7 @@ universes**. This is intentional, not an oversight:
   will be.
 - Greg's GitHub access to `kenekted-platform` comes from Ke'nekted's own
   invite — nothing to do with `vitalharmony`.
-- The only repo every project shares is `ai-platform`, and it's **public** —
+- The only repo every project shares is `harmonic-forge`, and it's **public** —
   no invite, no credential, no cross-account grant needed to clone or pull
   it. That's the one deliberate exception; everything else stays isolated.
 - Any tooling (Lane 2/3 agents, `gh` CLI, a service-lifecycle script) running
@@ -60,7 +60,7 @@ universes**. This is intentional, not an oversight:
 Landed 2026-07-12 through 2026-07-13, driven by real incidents on HRSE2
 (#233 burned ~10 review rounds and a full day's Devin credit budget before
 the pattern was caught; #236 later showed the first fix wasn't enough — see
-item 3). These are `ai-platform`-wide changes, so they apply to Ke'nekted
+item 3). These are `harmonic-forge`-wide changes, so they apply to Ke'nekted
 the moment you're on the platform, even though the incidents that produced
 them happened on a different project. Full records: `docs/decisions/ADR-002`
 through `ADR-005` in this repo.
@@ -89,7 +89,7 @@ through `ADR-005` in this repo.
    Spec**, and only then does "Implement #N" arrive. Implementing before
    that follow-up spec exists is a filed protocol violation (see
    `rules/universal-agent.md` § STANDING-RULE VIOLATIONS GET FILED —
-   HRSE2 #236 / ai-platform#50 is the incident record).
+   HRSE2 #236 / harmonic-forge#50 is the incident record).
 4. **Tooling Exception:** dev/test tooling (never application code, never
    shipped) can skip the full 3-lane loop when explicitly scoped that way
    — single implementer, one human-reviewed pass.
@@ -124,10 +124,10 @@ through `ADR-005` in this repo.
 
 ## Setup Steps (Adjust Once the Above Is Known)
 
-1. `git clone https://github.com/vitalharmony/ai-platform.git ~/ai-platform/`
+1. `git clone https://github.com/vitalharmony/harmonic-forge.git ~/harmonic-forge/`
    — public, no invite needed.
 2. Clone `kenekted-platform` using Ke'nekted's own credentials (not
    `vitalharmony`'s).
-3. From the Ke'nekted repo root: `python3 ~/ai-platform/sync_rules.py --project .`
+3. From the Ke'nekted repo root: `python3 ~/harmonic-forge/sync_rules.py --project .`
 4. Follow the Ke'nekted repo's own first-time-setup doc, if one exists —
    if not, that's a gap worth raising, not silently working around.
