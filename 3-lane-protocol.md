@@ -7,9 +7,23 @@ Condensed operational directives. For philosophy/rationale, see
 [GitHub Issue] → Dev pulls ticket → [Local 3-Lane Loop] → GitHub PR
                                        │
                                  Lane 1: Claude Code (Blueprint)
-                                 Lane 2: Devin Local (Muscle)
-                                 Lane 3: Devin AA (Control Gate) — local
+                                 Lane 2: Muscle — operator-assigned tool
+                                 Lane 3: Control Gate — operator-assigned tool
 ```
+
+**Lanes are roles, not fixed tools.** Lane 2 and Lane 3 are each filled by
+whichever tool the operator running that session assigns — Devin Local /
+Devin AA is the reference pairing this doc was originally written against
+and stays the default example throughout, but Codex (assignable to either
+Lane 2 or Lane 3 per issue — see the operator's own project rules file,
+e.g. `.windsurfrules`, for the exact trigger phrasing) is a second live
+example. Different collaborators (see Team Topology below) will likely
+bring their own tool preferences for these roles — the protocol's actual
+requirements (independent-eyes gating, no lane closes/merges on its own,
+HITL-gate language, etc.) are tool-agnostic and apply identically
+regardless of which specific tool is filling Lane 2 or Lane 3 on a given
+session. Only Lane 1 (Claude Code) is fixed by name in this doc, since it's
+this platform's own authoring tool.
 
 ## Lane 1 — Claude Code (Blueprint)
 
@@ -39,7 +53,14 @@ Condensed operational directives. For philosophy/rationale, see
 - Does not write production code directly (exception: explicit platform/
   tooling assignments — see `rules/universal-claude.md`).
 
-## Lane 2 — Devin Local (Muscle)
+## Lane 2 — Muscle (reference tool: Devin Local)
+
+*Devin Local is the reference implementation this section is written
+against — an operator assigning Codex or another tool to Lane 2 follows
+the same requirements below, with that tool's own equivalent mechanism
+where a Devin-specific file/path is named. See the project's own rules
+file (e.g. HRSE2's `.windsurfrules` "Codex role" section) for how a given
+tool's Lane 2 assignment is actually triggered and scoped.*
 
 - Given a short trigger (e.g. "implement #N") rather than pasted content,
   **fetches the issue and Lane 1's handoff comment from GitHub directly**
@@ -89,7 +110,22 @@ Condensed operational directives. For philosophy/rationale, see
   queries).
 - Signals completion with a structured diff summary back to Lane 1.
 
-## Lane 3 — Devin Autonomous Agent (Control Gate)
+## Lane 3 — Control Gate (reference tool: Devin AA)
+
+*Devin AA is the reference implementation this section is written
+against — an operator assigning Codex or another tool to Lane 3 must
+still meet every requirement below (independent read before gating, no
+edits/fixes/commits, FAIL-and-report rather than work around a blocker,
+no close/merge without explicit operator instruction), via that tool's
+own equivalent mechanism where a Devin-specific file/path is named below.
+**Mechanical enforcement, not prose alone, is what actually holds** — this
+project's own history (see `.devin/skills/lane3-gate/SKILL.md`'s origin)
+is a hard-tool-restriction gate built specifically because prose-only
+Lane 3 rules were violated under pressure more than once. Any tool newly
+assigned to Lane 3 should get an equivalent hard restriction (a
+permission/sandbox profile denying write/edit/commit/push tools for that
+session) wherever the tool supports one, not just an instruction file it's
+trusted to follow.*
 
 - **Own directives file: `~/.config/devin/AGENTS.md`** (local, machine-specific
   — not part of this repo, not synced by `sync_rules.py`). This is where
@@ -662,3 +698,13 @@ not a subagent.
 | Platform owner | Marc | Owns `ai-platform`; sets golden paths; merges platform PRs |
 | Feature delivery | Kyle (CymaGraph/HRSE2), Greg (Ke'nekted) | Consume golden paths; run the 3-lane loop locally; never edit platform rules directly |
 | Product demand | Shawn | Defines acceptance criteria on issues; approves shipped features |
+
+**Tool choice per lane is a per-collaborator decision, not a platform mandate.**
+Kyle, Greg, Ajit, and future collaborators each pick whichever tool they
+run for Lane 2/Lane 3 on their own machine — Devin Local/Devin AA and
+Codex are the two known examples as of this writing, not an exhaustive
+list. What's non-negotiable regardless of tool choice is the protocol
+itself (see the note under the lane diagram above): independent-eyes
+gating, no lane closes/merges on its own, and — per the Lane 3 note above
+— mechanical enforcement of the never-fixes-anything rule wherever the
+chosen tool supports it, not prose alone.
