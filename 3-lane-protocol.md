@@ -311,6 +311,28 @@ unnumbered trigger is ambiguous. Some triggers go to Lane 1; others go
 directly to Lane 2 or Lane 3 in their own respective interfaces, and Lane 1
 never sees them or acts on them.
 
+**Repo-prefixed issue numbers, when more than one repo is in flight.**
+Once a collaborator works across multiple repos in the same session (e.g.
+`vitalharmony/hrse` and `vitalharmony/harmonic-forge`), a bare `#N` is
+ambiguous the moment both repos happen to have an open issue with the same
+number — a real incident, HRSE2 2026-07-18: a status update named `#26`
+with no prefix, and the two repos' issue `#26`s were entirely unrelated
+work. Prefix the number with the repo: `H<N>` = `vitalharmony/hrse`#N,
+`F<N>` = `vitalharmony/harmonic-forge`#N. Applies to every trigger word in
+this section — "Implement H26", "Test F26", "Plan-first F58",
+"Reimplement H313" — the trigger vocabulary itself is unchanged, only the
+issue reference is disambiguated.
+
+**Lane-status shorthand.** A quick status update, not a trigger — `L<N>`
++ one letter: `L2P` (Lane 2 posted its plan, plan-first issues only),
+`L2D` (Lane 2 done/implementation posted), `L3P` (Lane 3 gate passed),
+`L3F` (Lane 3 gate failed). This is a pointer to go read the lane's actual
+report on the issue thread, never a substitute for it — the verification
+standard above still applies in full. Combine with a repo-prefixed number
+space-separated (`L3F H26`), not concatenated (`L3FH26`) — concatenating
+collides visually whenever the result letter and repo letter are both
+`F` (Fail + harmonic-**F**orge).
+
 **Before acting on any trigger, the receiving lane checks the issue's
 state.** If `#N` is already closed, stop and ask HITL to confirm the
 number before doing anything — don't proceed on the assumption a closed
