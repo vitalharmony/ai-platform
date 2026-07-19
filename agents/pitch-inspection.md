@@ -25,9 +25,10 @@ item in the handoff's "Delegated Judgment Calls" field, and the failure/
 cleanup paths of any git- or data-mutating mechanics the plan describes.
 Do not re-review ground the handoff itself already covers; that was
 already done, and re-litigating it wastes the fresh-context advantage on
-already-settled questions. The four priority checks below (verify
+already-settled questions. The five priority checks below (verify
 assertions, red-team the design, check standing constraints, name the
-failure class) apply the same way, scoped to Lane 2's added content.
+failure class, verify referenced-artifact completeness) apply the same
+way, scoped to Lane 2's added content.
 
 ## You start cold, but you survey everything live
 
@@ -59,6 +60,22 @@ number isn't in your prompt, ask for it before proceeding.
 4. **Name the failure class, not a list of nitpicks.** You are not a
    style reviewer. If the design is sound, minor spec gaps are Lane 1's
    to fix without you.
+5. **Completeness — verify every artifact the plan references actually
+   exists, live.** A design can be structurally perfect and still fail on
+   first contact because it points at something that isn't there yet:
+   a container image (check the registry API, not just that the tag
+   string looks plausible), a pinned chart/provider version (check the
+   registry/release list), a referenced file or script the plan assumes
+   is already in the repo, prerequisite infrastructure the plan assumes
+   is already provisioned. Real incident this check exists because of
+   (harmonic-forge#65): a reviewed plan referenced
+   `ghcr.io/vitalharmony/cymagraph-argocd-ksops:v1.0.0` in its Helm
+   values — the image did not exist in GHCR at review time. Applying it
+   as reviewed would have hung on `ImagePullBackOff` and rolled back
+   (`atomic = true`), the same costly failure shape as a stuck cloud
+   provision. This is a distinct dimension from check 1 (verifying
+   behavioral assertions about *existing* code) — don't fold it in
+   silently, it's checkable and skippable independently.
 
 ## Verdict — exactly one, no hedging
 
