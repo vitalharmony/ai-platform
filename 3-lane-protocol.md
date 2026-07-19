@@ -323,6 +323,15 @@ this section — "Implement H26", "Test F26", "Plan-first F58",
 "Reimplement H313" — the trigger vocabulary itself is unchanged, only the
 issue reference is disambiguated.
 
+**Universal, not just for triggers (extended 2026-07-19).** Every issue
+reference — a status update, a summary, a plain mention in a comment or
+in chat, not only the trigger phrases above — carries the `H`/`F` prefix,
+always, with no "obviously which repo from context" exception. HITL
+often relays an agent's own issue references directly into commands sent
+to other lanes; an unprefixed number forces HITL to disambiguate it
+first, which defeats the convention's purpose. "Closed #313" is wrong;
+"Closed H313" is right, in a summary just as much as in a trigger.
+
 **Lane-status shorthand.** A quick status update, not a trigger — `L<N>`
 + one letter: `L2P` (Lane 2 posted its plan, plan-first issues only),
 `L2D` (Lane 2 done/implementation posted), `L3P` (Lane 3 gate passed),
