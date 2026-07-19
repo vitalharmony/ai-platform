@@ -255,15 +255,31 @@ trusted to follow.*
   to route around, mock past, or retry; it is always an immediate
   stop-and-report.
 
+## Per-Lane Working Directories — git worktree
+
+Each repo a lane touches has a dedicated `git worktree` per lane
+(`<repo>-lane2/`, `<repo>-lane3/`, sibling to the main checkout), sharing
+one `.git` (history/objects/remotes) so there's no clone duplication —
+just filesystem isolation (hrse#278/#332, real incident 2026-07-19: a
+`cymagraph-infra` shared checkout went dirty mid-Lane-3-gate because Lane
+2 was implementing a different issue in the same directory at the same
+time). **Lane 2 always operates in `<repo>-lane2/`; Lane 3 always in
+`<repo>-lane3/`; Lane 1 and the human operator use the main checkout.** A
+lane starting work in a repo without its dedicated worktree existing yet
+should stop and ask, not fall back to the shared main checkout.
+
+This isolates the *filesystem*, not concurrent *live infrastructure*
+mutation (two lanes can still collide applying to the same live cluster
+at the same time) — Lane 3's read-only-except-human-attended-mutations
+boundary already covers that risk separately.
+
 ## Shared Working Directory — Commit Before You Yield
 
-All three lanes operate in the **same single working directory** on the
-local machine — there is no per-lane filesystem isolation today (tracked
-as a real structural fix: HRSE2#278, git worktrees, deferred pending
-`product-strategy` design work). Until that lands, the only thing standing
-between "normal handoff" and "one lane's uncommitted work confuses or gets
-swept into another lane's commit" is this discipline, applied by **every**
-lane, not just Lane 3:
+Worktree isolation (above) prevents *cross-lane* directory collisions, but
+each lane's own worktree can still end up dirty at a bad moment (e.g. Lane
+1 editing docs in the main checkout while making an unrelated commit). The
+following discipline still applies **within each lane's own directory**,
+by **every** lane, not just Lane 3:
 
 **Never yield control — post a completion comment, hand off, stop, or
 otherwise signal "done" — while leaving uncommitted changes in the shared
