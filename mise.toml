@@ -70,3 +70,50 @@ flag "--issue <issue>" help="Issue number" required=#true
 flag "--file <file>" help="Path to a file containing the comment body" required=#true
 '''
 run = "python3 tools/gh/post_comment.py --repo \"$GH_REPO\" --issue \"$usage_issue\" --file \"$usage_file\""
+
+[tasks.gate-checkout]
+description = "Lane 3: switch to a branch without discarding uncommitted work. Refuses pathspec forms and dirty trees. Fetches first; falls back to a detached checkout if the branch is already checked out in a sibling worktree (real incident, hrse#335: harmonic-forge#29/#30 both blocked because the reviewed branch was already checked out in the lane2 worktree)."
+usage = '''
+arg "<branch>" help="Branch name to check out"
+'''
+run = '''
+set -e
+branch="$usage_branch"
+
+if [ -z "$branch" ]; then
+  echo "gate-checkout: branch name is required" >&2
+  exit 1
+fi
+
+case "$branch" in
+  -*|.|..|/*|*[[:space:]]*)
+    echo "gate-checkout: invalid branch name '$branch'" >&2
+    exit 1
+    ;;
+esac
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "gate-checkout: refusing to switch branches with a dirty working tree" >&2
+  exit 1
+fi
+
+git fetch origin "$branch" --quiet || {
+  echo "gate-checkout: could not fetch '$branch' from origin" >&2
+  exit 1
+}
+
+if git checkout "$branch" 2>/tmp/gate-checkout-err.$$; then
+  rm -f /tmp/gate-checkout-err.$$
+  exit 0
+fi
+
+if grep -q "already used by worktree" /tmp/gate-checkout-err.$$; then
+  echo "gate-checkout: '$branch' is checked out in a sibling worktree — falling back to a detached checkout of the same commit" >&2
+  rm -f /tmp/gate-checkout-err.$$
+  git checkout --detach "origin/$branch"
+else
+  cat /tmp/gate-checkout-err.$$ >&2
+  rm -f /tmp/gate-checkout-err.$$
+  exit 1
+fi
+'''
