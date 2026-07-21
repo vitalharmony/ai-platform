@@ -19,7 +19,22 @@ for the UI-only variant.
    (test collusion). The issue is the oracle.
 2. The test spec goes to the Tech Lead for HITL approval (see
    `templates/hitl-test-review.md`) before any test executes.
-3. After approval, Lane 3 executes tests against Lane 2's implementation.
+3. **Immediately after HITL approval, before Lane 3's first execution
+   attempt, Lane 1 sweeps every test case in the approved spec for
+   environment/fixture readiness** — what each TC actually needs to run
+   (disposable containers, live local services, worktree-local config
+   files, installed dependencies/browser binaries, etc.) — and provisions
+   or verifies all of it in one pass. This is a Lane 1 responsibility, not
+   Lane 3's: Lane 3 is generally barred from building/starting fixtures
+   itself (see rule 8 and the state-changing-execution boundary in
+   individual test specs). Skipping this step means each missing
+   prerequisite is discovered reactively, one gate attempt at a time — the
+   incident that prompted this rule (HRSE2 hrse#330, harmonic-forge#80,
+   2026-07-21) cycled through branch-checkout, container-networking,
+   missing-venv/.env/Chromium, and missing-fixture blocks across five
+   separate rounds before this sweep step existed. Do the sweep once, up
+   front, not as a retry loop.
+4. After approval, Lane 3 executes tests against Lane 2's implementation.
    Live execution only — an "Evidence type: Source" citation (Lane 3 read
    the code and reasoned it should pass) does not satisfy this gate. Every
    check needs an actual run: a request/response, a log line, a before/after
@@ -39,17 +54,17 @@ for the UI-only variant.
      trusting prose that live execution happened — the same
      verify-live-not-source discipline applied one level up, to the gate
      report itself.
-4. If tests fail, Lane 3 may attempt up to 3 auto-fixes **of its own test
+5. If tests fail, Lane 3 may attempt up to 3 auto-fixes **of its own test
    spec/fixtures** (a bad assertion, a stale fixture, a wrong selector) — 
    **never of the application code under test.** A 4th consecutive failure
    on the same root cause escalates to the Tech Lead rather than retrying
    further. If the failure traces to a genuine bug in the implementation
    (not the test), that is not an auto-fix case at all — stop and report it
-   as a gate finding, same as rule 5's style-pass violations, regardless of
+   as a gate finding, same as rule 6's style-pass violations, regardless of
    how trivial or obviously-correct the fix would be. See
    `3-lane-protocol.md`'s Lane 3 section for the full rule and the incident
    that prompted this clarification (HRSE2 #176).
-5. Once tests pass, Lane 3 performs a style/refactor pass per the project's
+6. Once tests pass, Lane 3 performs a style/refactor pass per the project's
    `.windsurfrules`, then is unblocked to commit. **This pass is
    report-only — Lane 3 identifies violations, it does not fix them,
    whether the violation is pre-existing or was introduced by the change
@@ -60,18 +75,18 @@ for the UI-only variant.
    route back to Lane 1/Lane 2 — it does not edit the file itself to
    clear its own finding. See `rules/universal-agent.md`'s no-ad-hoc-fixes
    rule — this applies to Lane 3 exactly as it does to Lane 1.
-6. If any check truly cannot be live-verified in the current environment
+7. If any check truly cannot be live-verified in the current environment
    (e.g. no browser available for a UI check), Lane 3 must say so explicitly
    rather than substituting a source-code citation — a partial, honest result
    is acceptable; a disguised one is not.
-7. **Fast-fail on external blockers.** If a live check is blocked by a
+8. **Fast-fail on external blockers.** If a live check is blocked by a
    genuine external dependency — a bug in another open issue this ticket's
    verification requires, a missing precondition, an environment gap that
    isn't this ticket's to fix — Lane 3 confirms the blocker is real with the
    minimum evidence needed (one clean repro, not exploratory workarounds),
    then stops and reports it as a gate finding **immediately**, not after
    attempting workarounds, mocks, or alternate verification paths to route
-   around it. This is distinct from rule 4 (Lane 3's own test-spec issues) —
+   around it. This is distinct from rule 5 (Lane 3's own test-spec issues) —
    an external blocker in another lane's work is never something to route
    around, mock past, or retry; it is always an immediate stop-and-report.
    See `3-lane-protocol.md`'s Lane 3 section for the full rule and the
