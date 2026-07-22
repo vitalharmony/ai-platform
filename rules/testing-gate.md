@@ -34,6 +34,21 @@ for the UI-only variant.
    missing-venv/.env/Chromium, and missing-fixture blocks across five
    separate rounds before this sweep step existed. Do the sweep once, up
    front, not as a retry loop.
+   - **The sweep also covers structural preconditions on the code itself,
+     not just fixtures/environment** — does the implementation's own
+     trigger condition, branch/merge state, or deployment position mean
+     Lane 3 *cannot* observe a real live execution yet, independent of
+     whatever fixtures are ready? Concretely: a CI job gated on
+     `if: push to main` cannot be live-tested from an unmerged branch; a
+     feature behind a flag/config that isn't set anywhere yet cannot be
+     live-tested until it is. This class was missed even after rule 3
+     existed (harmonic-forge#82, 2026-07-21 — Lane 1 swept fixtures/
+     secrets but not the workflow's own `push`-to-`main`-only trigger
+     condition, caught only because the operator asked "are you sure?" a
+     second time). State explicitly in the sweep write-up whether each TC
+     is executable as-is, or names the specific human-attended action
+     (merge, deploy, flag flip) still required before it can run — don't
+     let "the fixture is ready" stand in for "the test can actually run."
 4. After approval, Lane 3 executes tests against Lane 2's implementation.
    Live execution only — an "Evidence type: Source" citation (Lane 3 read
    the code and reasoned it should pass) does not satisfy this gate. Every
