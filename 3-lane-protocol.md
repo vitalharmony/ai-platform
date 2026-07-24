@@ -631,6 +631,35 @@ reporting completion that doesn't match reality) are not a design problem;
 no pre-flight review touches that class. It is governed separately by the
 verify-live-not-source standard.
 
+## Pre-Handoff Precondition Trace — Stop Reactive Blocker Discovery
+
+Real incident, harmonic-forge#93: a single command hit five consecutive
+blockers across five round-trips, each one statically discoverable in the
+target's own guard-clause chain before anything was sent. The trace-and-
+verify pass was voluntary and memory-triggered, so it only happened once
+demanded explicitly. This makes it structural instead.
+
+**Trigger:** the handoff's receiving action is a live/`--apply`/data-
+mutating command, or the deliverable's actual location differs from the
+issue's tracking repo. Satisfied by `templates/lane1-handoff.md`'s
+*Pre-Flight Preconditions* field — every item traced (guard-clause/flag
+chain read, evidence pasted inline), verified-present (checked live in the
+*receiving* environment), or external-blocked (a genuine unknown needing a
+human, e.g. a live-console-only value — name it, don't force-verify it).
+A blank/incomplete field on a qualifying handoff is a `pitch-inspection`
+trigger, same bar as an "asserted" Load-Bearing Assumption.
+
+**Symmetric on Lane 2's side.** Lane 2 does not trust Lane 1's field on
+faith, the same way Lane 3 never trusts Lane 2's completion claims — it
+re-verifies each precondition itself before writing any code, and reports
+back a discrepancy rather than proceeding past one. Lane 1 traces wrong
+sometimes too (see #93's own incident record).
+
+**What this does not cover:** genuinely unknowable externals (an OAuth
+console value, a third party's live state) stay external-blocked, routed
+to the human — this section forces tracing what's knowable, not
+verifying the unverifiable.
+
 ## Plan-First Implementation — Reviewing Lane 2's Plan Before Credits Burn
 
 `pitch-inspection` (above) reviews Lane 1's *design* before handoff. But

@@ -49,6 +49,20 @@ for the UI-only variant.
      is executable as-is, or names the specific human-attended action
      (merge, deploy, flag flip) still required before it can run — don't
      let "the fixture is ready" stand in for "the test can actually run."
+   - **Post the sweep as a structured checklist in the handoff/gate
+     comment** (one line per TC: executable-as-is, or the named blocking
+     action), not a prose paragraph — matches the evidence-not-prose
+     standard in rule 4 below, and see `3-lane-protocol.md`
+     § Pre-Handoff Precondition Trace for the same discipline applied
+     before Lane 2's implementation, not just before Lane 3's gate.
+   - **A dependency present only via an undocumented ad-hoc install (not
+     declared in the project's actual manifest — `requirements.txt`,
+     `package.json`, etc.) is itself a sweep finding**, not something to
+     silently install and move past — it means every *other* environment
+     (a fresh Lane 3 worktree, a rebuilt container) is one dependency
+     short of working (hrse#325: `pytest` ran in the main dev venv for
+     months, never declared anywhere, so the first fresh gate venv to
+     need it failed cold).
 4. After approval, Lane 3 executes tests against Lane 2's implementation.
    Live execution only — an "Evidence type: Source" citation (Lane 3 read
    the code and reasoned it should pass) does not satisfy this gate. Every
