@@ -50,6 +50,19 @@ get it reviewed before writing any code. Don't write "none" here because a
 decision is inconvenient to make now — an undeclared delegation is exactly
 the gap that produced HRSE2 #233's recurring bug class.
 
+### Pre-Flight Preconditions
+{none | for a live/`--apply`/data-mutating command or a cross-repo
+deliverable, list every precondition the receiving action will hit, each
+marked **traced** (target's guard-clause/required-flag chain read, evidence
+pasted inline), **verified-present** (confirmed live in the *receiving*
+environment — tool installed, worktree trusted, sibling path exists), or
+**external-blocked** (genuinely unresolvable by either lane, e.g. a live
+console value only a human can check — name it, don't guess it)} — see
+`3-lane-protocol.md` § Pre-Handoff Precondition Trace. A blank/incomplete
+field on a qualifying handoff blocks posting, same as an "asserted"
+Load-Bearing Assumption. Lane 2 does not trust this field on faith — it
+re-verifies each item itself before implementing (same section).
+
 ### Implementation Spec
 **If this handoff triggers Plan-First Implementation** (`3-lane-protocol.md`
 § Plan-First Implementation — Delegated Judgment Calls above is non-"none",
